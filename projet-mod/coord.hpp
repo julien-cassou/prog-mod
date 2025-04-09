@@ -9,6 +9,7 @@
 #define COORD_HPP
 #include <stdexcept>
 #include <ostream>
+using namespace std;
 
 const int TAILLEGRILLE = 40;
 
@@ -21,7 +22,7 @@ private:
 public:
     //constructeur : interdit les coordonnées hors de la grille
     Coord(int l, int c);
-    
+    Coord(int entier);
     //accesseurs
     int getLigne() const;
     int getColonne() const;
@@ -30,4 +31,4 @@ public:
 
 
 //question 7
-std::ostream& operator<<(std::ostream& os, const Coord& c);
+ostream& operator<<(ostream& os, const Coord& c);

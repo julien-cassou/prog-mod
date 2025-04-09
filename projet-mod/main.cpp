@@ -9,6 +9,8 @@
 #include "doctest.h"
 #include <iostream>
 #include "coord.hpp"
+using namespace std;
+
 //question 8
 int main() {
     try {
@@ -16,11 +18,10 @@ int main() {
         Coord c(8, 15);
 
         //affichage
-        std::cout << "Voici ma coordonnée : " << c << std::endl;
+        cout << "Voici ma coordonnée : " << c << std::endl;
     }
     catch (const std::out_of_range& e) {
-        std::cerr << "Erreur : " << e.what() << std::endl;
+        cerr << "Erreur : " << e.what() << std::endl;
     }
-
     return 0;
 }
