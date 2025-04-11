@@ -50,8 +50,9 @@ class Ensemble {
     int cardinal() const;
     bool estVide() const;
     void ajoute(int entier);
-    void tire();
+    int tire();
     void affiche(ostream& out) const;
+    void nouvelle_ensemble(int taille);
     // opérateur
     friend ostream &operator<<(ostream& out, const Ensemble& e);
 };

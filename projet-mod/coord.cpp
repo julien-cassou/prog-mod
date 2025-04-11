@@ -150,8 +150,13 @@ bool Ensemble::estVide() const {
     return (cardinal() == 0);
 }
 
+// Q5
+
 void Ensemble::ajoute(int entier) {
     int c = cardinal();
+    if (c >= MAXCARD) {
+        throw runtime_error("L'ensemble est plein");
+    }
     if(c == 0) {t[0] = entier;}
     else {
         t[c] = entier;
@@ -159,5 +164,67 @@ void Ensemble::ajoute(int entier) {
     card++;
 }
 
-// void Ensemble::tire
-        
+int Ensemble::tire() {
+    if (cardinal() == 0) {
+        throw runtime_error("L'ensemble est vide");
+    }
+    int indice = rand() % (cardinal() + 1);
+    int elem = t[indice];
+    for (int i = indice; i < cardinal() - 1; i++) {
+        t[i] = t[i+1];
+    }
+    t[cardinal()] = 0;
+    card--;
+    return elem;
+}
+
+/** méthode pour créer des ensembles de tests **/
+    // Julien
+void Ensemble::nouvelle_ensemble(int taille) {
+    Ensemble e;
+    for (int i = 0; i < taille; i++) {
+        t[i] = rand() % 20;
+        card++;
+    }
+}
+
+TEST_CASE("cardinal") {
+    Ensemble t;
+    t.nouvelle_ensemble(5);
+    CHECK(t.cardinal() == 5);
+    t.ajoute(9);
+    CHECK(t.cardinal() == 6);
+    Ensemble e;
+    CHECK(e.cardinal() == 0);
+}
+
+TEST_CASE("estVide") {
+    Ensemble t;
+    t. nouvelle_ensemble(5);
+    CHECK_FALSE(t.estVide());
+    Ensemble e;
+    CHECK(e.estVide());
+}
+
+TEST_CASE("ajoute") {
+    Ensemble e;
+    e.nouvelle_ensemble(MAXCARD);
+    CHECK_THROWS_AS(e.ajoute(4), runtime_error);
+    Ensemble t;
+    t.ajoute(1);
+    CHECK(t.cardinal() == 1);
+}
+
+TEST_CASE("tire" ) {
+    Ensemble e;
+    CHECK_THROWS_AS(e.tire(), runtime_error);
+    Ensemble j;
+    j.nouvelle_ensemble(5);
+    j.tire();
+    CHECK(j.cardinal() == 4);
+    Ensemble p;
+    p.nouvelle_ensemble(1);
+    p.tire();
+    CHECK(p.estVide());
+}
+
