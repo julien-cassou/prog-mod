@@ -46,11 +46,12 @@ class Ensemble {
     public:
     // constructeurs
     Ensemble();
-    // Ajout d'un accesseur pour card
+    // méthodes
     int cardinal() const;
-    void estVide() const;
+    bool estVide() const;
     void ajoute(int entier);
     void tire();
+    void affiche(ostream& out) const;
     // opérateur
     friend ostream &operator<<(ostream& out, const Ensemble& e);
 };

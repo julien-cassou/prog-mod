@@ -120,14 +120,15 @@ TEST_CASE("toInt & constructeur à partir d'un entier") {
 
 // Ex 3
 // Q2
-int Ensemble::cardinal() const{
-    return card;
+
+void Ensemble::affiche(ostream& out) const {
+    for (int i = 0; i < card; i++) {
+        out << t[i] << " ";
+    }
 }
 
 ostream &operator<<(ostream& out, const Ensemble& e) {
-    for (int i = 0; i < e.getCard(); i++) {
-        out << e.t[i] << " ";
-    }
+    e.affiche(out);
     return out;
 }
 
@@ -139,17 +140,24 @@ Ensemble::Ensemble() {
     }
 }
 
-void Ensemble::estVide() const {
-    return (card == 0);
+// Q4
+
+int Ensemble::cardinal() const{
+    return card;
+}
+
+bool Ensemble::estVide() const {
+    return (cardinal() == 0);
 }
 
 void Ensemble::ajoute(int entier) {
-    for (int i = 0; i < cardinal; i++) { 
-        if (t[i] == 0) { 
-            t[i] = entier;
-        }
+    int c = cardinal();
+    if(c == 0) {t[0] = entier;}
+    else {
+        t[c] = entier;
     }
+    card++;
 }
 
-void Ensemble::tire
+// void Ensemble::tire
         

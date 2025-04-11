@@ -23,7 +23,11 @@ int main() {
         cerr << "Erreur : " << e.what() << endl;
     }
     Ensemble e;
-    cout << e << endl;
-    cout << 3;
+    e.ajoute(5);    
+    e.ajoute(3);  
+    e.ajoute(1); 
+    if (e.estVide()) {
+        cout << "vide";
+    }else{ cout << e;}
     return 0;
 }
