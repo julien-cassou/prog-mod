@@ -4,10 +4,9 @@
 //
 //  Created by Lucia Casalta on 02/04/2025.
 //
-
+#include <iostream>
 #define DOCTEST_CONFIG_IMPLEMENT
 #include "doctest.h"
-#include <iostream>
 #include "coord.hpp"
 using namespace std;
 
@@ -18,10 +17,13 @@ int main() {
         Coord c(8, 15);
 
         //affichage
-        cout << "Voici ma coordonnée : " << c << std::endl;
+        cout << "Voici ma coordonnée : " << c << endl;
     }
-    catch (const std::out_of_range& e) {
-        cerr << "Erreur : " << e.what() << std::endl;
+    catch (const out_of_range& e) {
+        cerr << "Erreur : " << e.what() << endl;
     }
+    Ensemble e;
+    cout << e << endl;
+    cout << 3;
     return 0;
 }

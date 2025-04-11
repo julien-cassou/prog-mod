@@ -15,20 +15,45 @@ const int TAILLEGRILLE = 40;
 
 //declaration de la class pour position dans une grille
 class Coord {
-private:
+    private:
     int ligne;
     int colonne;
-    
-public:
+    public:
     //constructeur : interdit les coordonnées hors de la grille
     Coord(int l, int c);
     Coord(int entier);
     //accesseurs
     int getLigne() const;
     int getColonne() const;
+    // opérateur
+    friend ostream &operator<<(ostream& os, const Coord& c);
 };
-#endif // COORD_HPP
 
 
 //question 7
-ostream& operator<<(ostream& os, const Coord& c);
+
+
+    // Julien
+
+// Ex 3
+
+const int MAXCARD = 100;
+
+class Ensemble {
+    private:
+    int t[MAXCARD];
+    int card;
+    public:
+    // constructeurs
+    Ensemble();
+    // Ajout d'un accesseur pour card
+    int cardinal() const;
+    void estVide() const;
+    void ajoute(int entier);
+    void tire();
+    // opérateur
+    friend ostream &operator<<(ostream& out, const Ensemble& e);
+};
+
+
+#endif // COORD_HPP

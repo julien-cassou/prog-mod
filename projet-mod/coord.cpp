@@ -67,7 +67,7 @@ TEST_CASE("colonne hors borne") {
     CHECK_THROWS_AS(Coord(5, 40), out_of_range);
 }
 //question 7 ,operateur d'affichage
-ostream& operator<<(ostream& os, const Coord& c) {
+ostream &operator<<(ostream& os, const Coord& c) {
     os << "(" << c.getLigne() << ", " << c.getColonne() << ")";
     return os;
 }
@@ -86,7 +86,7 @@ bool operator==(const Coord& c, const Coord&d) {
 }
 
 bool operator!=(const Coord& c, const Coord&d) {
-    return c == d;
+    return !(c == d);
 }
 
 TEST_CASE("operateur == et !=") {
@@ -117,3 +117,39 @@ TEST_CASE("toInt & constructeur à partir d'un entier") {
     CHECK(d.getColonne() == 4);
     CHECK(d.getLigne() == 5);
 }       //faut peut être ajouté des tests j'ai pas du faire tous les cas.
+
+// Ex 3
+// Q2
+int Ensemble::cardinal() const{
+    return card;
+}
+
+ostream &operator<<(ostream& out, const Ensemble& e) {
+    for (int i = 0; i < e.getCard(); i++) {
+        out << e.t[i] << " ";
+    }
+    return out;
+}
+
+// Q3
+Ensemble::Ensemble() {
+    card = 0;
+    for (int i = 0; i < MAXCARD; i++) {
+        t[i] = 0;
+    }
+}
+
+void Ensemble::estVide() const {
+    return (card == 0);
+}
+
+void Ensemble::ajoute(int entier) {
+    for (int i = 0; i < cardinal; i++) { 
+        if (t[i] == 0) { 
+            t[i] = entier;
+        }
+    }
+}
+
+void Ensemble::tire
+        
