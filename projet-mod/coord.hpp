@@ -11,33 +11,12 @@
 #include <ostream>
 using namespace std;
 
-const int TAILLEGRILLE = 40;
-
-//declaration de la class pour position dans une grille
-class Coord {
-    private:
-    int ligne;
-    int colonne;
-    public:
-    //constructeur : interdit les coordonnées hors de la grille
-    Coord(int l, int c);
-    Coord(int entier);
-    //accesseurs
-    int getLigne() const;
-    int getColonne() const;
-    // opérateur
-    friend ostream &operator<<(ostream& os, const Coord& c);
-};
-
-
-//question 7
-
 
     // Julien
 
 // Ex 3
 
-const int MAXCARD = 100;
+const int MAXCARD = 1600;
 
 class Ensemble {
     private:
@@ -57,5 +36,24 @@ class Ensemble {
     friend ostream &operator<<(ostream& out, const Ensemble& e);
 };
 
+
+const int TAILLEGRILLE = 40;
+
+//declaration de la class pour position dans une grille
+class Coord {
+    private:
+    int ligne;
+    int colonne;
+    public:
+    //constructeur : interdit les coordonnées hors de la grille
+    Coord(int l, int c);
+    Coord(int entier);
+    //méthodes
+    int getLigne() const;
+    int getColonne() const;
+    Ensemble voisines() const;
+    // opérateur
+    friend ostream &operator<<(ostream& os, const Coord& c);
+};
 
 #endif // COORD_HPP

@@ -68,7 +68,7 @@ TEST_CASE("colonne hors borne") {
 }
 //question 7 ,operateur d'affichage
 ostream &operator<<(ostream& os, const Coord& c) {
-    os << "(" << c.getLigne() << ", " << c.getColonne() << ")";
+    os << "(" << c.getLigne() << "," << c.getColonne() << ")";
     return os;
 }
 //test question7(en plus)
@@ -76,7 +76,7 @@ TEST_CASE("Affichage Coord") {
     Coord c(1, 2);
     ostringstream oss;
     oss << c;
-    CHECK(oss.str() == "(1, 2)");
+    CHECK(oss.str() == "(1,2)");
 }
 
         // Julien Cassou
@@ -123,7 +123,9 @@ TEST_CASE("toInt & constructeur à partir d'un entier") {
 
 void Ensemble::affiche(ostream& out) const {
     for (int i = 0; i < card; i++) {
-        out << t[i] << " ";
+        int c = t[i] % TAILLEGRILLE;
+        int l = (t[i] - c) / TAILLEGRILLE;
+        out << Coord(l,c) << " ";
     }
 }
 
@@ -228,3 +230,81 @@ TEST_CASE("tire" ) {
     CHECK(p.estVide());
 }
 
+// Ex 4
+    // Q1
+
+Ensemble Coord::voisines() const {
+    Ensemble res;
+    int i_max = min(ligne + 1, TAILLEGRILLE -1);  //49 
+    int i_min = max(ligne -1, 0);  //49
+    int j_max = min(colonne + 1, TAILLEGRILLE-1);
+    int j_min = max(colonne - 1, 0);
+    for (int i = i_min; i <= i_max; i++) {
+        for (int j = j_min; j <= j_max; j++) {
+            Coord temp = Coord(i,j);
+            if (temp != (Coord (ligne,colonne))) {
+                res.ajoute(toInt(temp));
+            }
+        }
+    }
+    return res;
+}
+
+// Q2
+
+TEST_CASE("voisines") {
+    Coord c1 = Coord(0,0);
+    Coord c2 = Coord(TAILLEGRILLE - 1,TAILLEGRILLE - 1);
+    Coord c3 = Coord(0,TAILLEGRILLE - 1);
+    Coord c4 = Coord(TAILLEGRILLE - 1,0);
+    Coord c5 = Coord(3,4);
+    Coord c6 = Coord(4,3);
+    Ensemble e1 = c1.voisines();
+    CHECK(e1.cardinal() == 3);
+    ostringstream os;
+    e1.affiche(os);
+    CHECK(os.str() == "(0,1) (1,0) (1,1) ");
+    Ensemble e2 = c2.voisines();
+    CHECK(e2.cardinal() == 3);
+    ostringstream oss;
+    e2.affiche(oss);
+    CHECK(oss.str() == "(38,38) (38,39) (39,38) ");
+    Ensemble e3 = c3.voisines();
+    CHECK(e3.cardinal() ==3);
+    Ensemble e4 = c4.voisines();
+    CHECK(e4.cardinal() == 3);
+    Ensemble e5 = c5.voisines();
+    CHECK(e5.cardinal() == 8);
+    Ensemble e6 = c6.voisines();
+    CHECK(e6.cardinal() == 8);
+}
+
+
+
+
+
+
+
+    // if (ligne == 0) {
+    //     for (int i = 0; i < 2; i++) {
+    //         if (colonne == 0) {
+    //             for (int j = 0, j < 2; j++) {
+    //                 Coord(i,j) c;
+    //                 res.ajoute(c.toInt());
+    //             }
+    //         }
+    //         else {
+    //             for (int j = colonne -1; j <= colonne + 1; j++) {
+    //                 Coord(i,j) c;
+    //                 res.ajoute(c.toInt());
+    //             }
+    //         }
+    //     }
+    // }
+    // else {
+    //     for (int i = ligne -1; i < ligne + 1; i++) {
+    //         if (colonne == 0) {
+                
+    //         }
+    //     }
+    // }
