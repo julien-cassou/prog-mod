@@ -46,6 +46,7 @@ TEST_CASE( "ligne hors borne") {
 TEST_CASE("colonne hors borne") {
     CHECK_THROWS_AS(Coord(10, -2), out_of_range);
     CHECK_THROWS_AS(Coord(10, 100), out_of_range);
+    CHECK_THROWS_AS(Coord(TAILLEGRILLE, TAILLEGRILLE), out_of_range);
 }
 //question 4
 TEST_CASE("une coordonnée") {
@@ -279,32 +280,27 @@ TEST_CASE("voisines") {
     CHECK(e6.cardinal() == 8);
 }
 
+// Cours TD
 
+Animal::Animal(int id, Espece espece, Coord coord) : id{id} , espece{espece}, coord{coord}, food{0} {};
 
+int Animal::getId() const {
+    return id;
+}
 
+Coord Animal::getCoord() const {
+    return coord;
+}
 
+void Animal::setCoord(Coord c) {
+    coord = c;
+}
 
+Espece Animal::getEspece() const {
+    return espece;
+}
 
-    // if (ligne == 0) {
-    //     for (int i = 0; i < 2; i++) {
-    //         if (colonne == 0) {
-    //             for (int j = 0, j < 2; j++) {
-    //                 Coord(i,j) c;
-    //                 res.ajoute(c.toInt());
-    //             }
-    //         }
-    //         else {
-    //             for (int j = colonne -1; j <= colonne + 1; j++) {
-    //                 Coord(i,j) c;
-    //                 res.ajoute(c.toInt());
-    //             }
-    //         }
-    //     }
-    // }
-    // else {
-    //     for (int i = ligne -1; i < ligne + 1; i++) {
-    //         if (colonne == 0) {
-                
-    //         }
-    //     }
-    // }
+ostream& Animal::affiche(ostream &out) const {
+    out << "Animal: " << id << ", " << espece << ", " << coord << ", " << food;
+    return out;
+}
