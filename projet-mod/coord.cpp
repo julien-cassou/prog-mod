@@ -282,7 +282,17 @@ TEST_CASE("voisines") {
 
 // Cours TD
 
-Animal::Animal(int id, Espece espece, Coord coord) : id{id} , espece{espece}, coord{coord}, food{0} {};
+
+ostream& Animal::operator<<(ostream& out, Espece espece) {
+    switch(espece) [
+        case Espece::Renard: out << "Renard"; break;
+        case Espece::Lapin: out << "Lapin"; break;
+        default: throw runtime_error("espèce non reconnué");
+    ]
+    return out;
+}
+
+Animal::Animal(int id, Espece espece, Coord coord) : id{id} , espece{espece}, coord{coord}, food{FoodInit} {};
 
 int Animal::getId() const {
     return id;
@@ -301,6 +311,52 @@ Espece Animal::getEspece() const {
 }
 
 ostream& Animal::affiche(ostream &out) const {
-    out << "Animal: " << id << ", " << espece << ", " << coord << ", " << food;
+    out << "Animal: " << id << ", " << espece << ", " << coord;
+    if (espece == Espece::Renard ) {
+        out << ", " << food;
+    } 
     return out;
 }
+
+bool Animal::estMort() const {
+    if (espece == Espece::Renard) {
+        if (food == 0) {
+            return true;
+        }
+    }
+    return false;
+}  
+
+bool Animal::seReproduit(int nbVoisin) const {
+    if( espece == Espece::Renard and food >= FoodReprod) {
+        return true;
+    }
+    else if (nbVoisin >= MinFreeBirthLapin) {
+        return true;
+    }
+    return false;
+}
+
+void Animal::mange() {
+    if (espece == Espece::Lapin) {
+        throw runtime_error("Un lapin ne mange que de l'herbe");
+    }
+    else {
+        food += FoodLapin;
+    }
+}
+
+void Animal::jeune() {
+    if (espece == Espece::Lapin) {
+        throw runtime_error("Un lapin mange tous le temps de l'herbe");
+    }
+    else {
+        food -= 1;
+    }
+}
+
+ostream& operator<<(ostream& out, Animal animal) {
+    animal.affiche(out);
+    return out;
+}
+
