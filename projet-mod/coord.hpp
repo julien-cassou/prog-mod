@@ -9,6 +9,7 @@
 #define COORD_HPP
 #include <stdexcept>
 #include <ostream>
+#include <vector>
 using namespace std;
 
 
@@ -59,7 +60,7 @@ class Coord {
     friend ostream &operator<<(ostream& os, const Coord& c);
 };
 
-enum class Espece(Lapin, Renard);
+enum class Espece {Lapin, Renard};
 
 const float ProBirthLapin = 0.30;
 const int MinFreeBirthLapin = 4;
@@ -105,11 +106,11 @@ class Population {
         Animal get(int id) const;
         Ensemble getIds() const;
         int reserve();
-        void set(int id; Animal animal);
+        void set(int id, Animal animal);
         void supprime(int id);
     private:
-        array<Animal,MAX> animaux;
-        array<bool,MAX> id-reserve;
+        // array<Animal,MAXCARD> animaux;
+        // array<bool,MAXCARD> id_reserve;
 };
 
 class Grille {
@@ -122,7 +123,7 @@ class Grille {
         void VideCase(Coord coordonnées);
         void setCase(Coord coordonnées, int id);
     private:
-        vector<vector<Coord>> Grille;
+        vector<vector<Coord>> grille;
 };
 
 class Jeu {
@@ -131,5 +132,5 @@ class Jeu {
     private:
         Population population;
         Grille grille;
-}
+};
 #endif // COORD_HPP

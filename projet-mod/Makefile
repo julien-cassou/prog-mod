@@ -1,7 +1,7 @@
 
 # === Variables ===
 CXX = g++
-CXXFLAGS = -std=c++17 -Wall -Wextra -I.
+CXXFLAGS = -std=c++17 -Wall -Wextra -std=c++17
 
 # === Fichiers objets ===
 OBJS_TEST = test.o coord.o

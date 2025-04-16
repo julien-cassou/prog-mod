@@ -283,20 +283,31 @@ TEST_CASE("voisines") {
 // Cours TD
 
 
-ostream& Animal::operator<<(ostream& out, Espece espece) {
-    switch(espece) [
+ostream& operator<<(ostream& out, Espece espece) {
+    switch(espece) {
         case Espece::Renard: out << "Renard"; break;
         case Espece::Lapin: out << "Lapin"; break;
         default: throw runtime_error("espèce non reconnué");
-    ]
+    }
     return out;
+}
+
+TEST_CASE("affichage espèce") {
+    ostringstream out;
+    out << Espece::Renard;
+    CHECK(out.str() == "Renard");
+    ostringstream os;
+    os << Espece::Lapin;
+    CHECK(os.str() == "Lapin");
 }
 
 Animal::Animal(int id, Espece espece, Coord coord) : id{id} , espece{espece}, coord{coord}, food{FoodInit} {};
 
+
 int Animal::getId() const {
     return id;
 }
+
 
 Coord Animal::getCoord() const {
     return coord;
@@ -308,6 +319,14 @@ void Animal::setCoord(Coord c) {
 
 Espece Animal::getEspece() const {
     return espece;
+}
+
+TEST_CASE("constructeur & accesseurs") {
+    Animal a = {23, Espece::Renard, Coord (1,2)};
+    CHECK(a.getId() == 23);
+    CHECK(a.getCoord() == Coord (1,2));
+    a.setCoord(Coord (3,4));
+    CHECK(a.getCoord() == Coord (3,4));
 }
 
 ostream& Animal::affiche(ostream &out) const {
@@ -327,8 +346,24 @@ bool Animal::estMort() const {
     return false;
 }  
 
+void Animal::jeune() {
+    if (espece == Espece::Lapin) {
+        throw runtime_error("Un lapin mange tous le temps de l'herbe");
+    }
+    else {
+        food -= 1;
+    }
+}
+
+TEST_CASE("estMort & jeune") {
+    Animal b = {3, Espece::Renard, Coord (6,13)};
+    CHECK_FALSE(b.estMort());
+    for(int i = 1; i <= 5; i++) { b.jeune();}
+    CHECK(b.estMort());
+}
+
 bool Animal::seReproduit(int nbVoisin) const {
-    if( espece == Espece::Renard and food >= FoodReprod) {
+    if( espece == Espece::Renard and food >= FoodReprod) {                 //j'ai pas utilisé les probas
         return true;
     }
     else if (nbVoisin >= MinFreeBirthLapin) {
@@ -336,6 +371,7 @@ bool Animal::seReproduit(int nbVoisin) const {
     }
     return false;
 }
+
 
 void Animal::mange() {
     if (espece == Espece::Lapin) {
@@ -346,17 +382,29 @@ void Animal::mange() {
     }
 }
 
-void Animal::jeune() {
-    if (espece == Espece::Lapin) {
-        throw runtime_error("Un lapin mange tous le temps de l'herbe");
-    }
-    else {
-        food -= 1;
-    }
+TEST_CASE("mange") {
+    Animal b = {3, Espece::Renard, Coord (6,13)};
+    for(int i = 1; i <= 5; i++) { b.jeune();}
+    b.mange();
+    CHECK_FALSE(b.estMort());
+    Animal a = {2, Espece::Lapin, Coord (5,13)};
+    CHECK_THROWS_AS(a.mange(), runtime_error);
 }
+
 
 ostream& operator<<(ostream& out, Animal animal) {
     animal.affiche(out);
     return out;
+}
+
+TEST_CASE("affichage Animal") {
+    Animal a = {2, Espece::Lapin, Coord (5,13)};
+    ostringstream os;
+    os << a;
+    CHECK(os.str() == "Animal: 2, Lapin, (5,13)");
+    Animal b = {3, Espece::Renard, Coord (6,13)};
+    ostringstream oss;
+    oss << b;
+    CHECK(oss.str() == "Animal: 3, Renard, (6,13), 5");
 }
 
