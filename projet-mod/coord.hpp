@@ -74,7 +74,7 @@ const int MaxFood = 10;
 class Animal {
     public:
         // Constructeurs
-        // Animal();
+        Animal();
         Animal(int id, Espece espece, Coord coord);
         // accesseurs
         int getId() const;
@@ -109,8 +109,9 @@ class Population {
         void set(int id, Animal animal);
         void supprime(int id);
     private:
-        // array<Animal,MAXCARD> animaux;
-        // array<bool,MAXCARD> id_reserve;
+        array<Animal,MAXCARD> animaux;
+        array<bool,MAXCARD> id_reserve;
+        vector<int> id_dispo;
 };
 
 class Grille {

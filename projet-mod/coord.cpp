@@ -9,6 +9,7 @@
 #include "doctest.h"
 #include <stdexcept>
 #include <sstream>
+#include <vector>
 using namespace std;
 
 //constructeur
@@ -363,15 +364,14 @@ TEST_CASE("estMort & jeune") {
 }
 
 bool Animal::seReproduit(int nbVoisin) const {
-    if( espece == Espece::Renard and food >= FoodReprod) {                 //j'ai pas utilisé les probas
-        return true;
+    if (espece == Espece::Renard and food >= FoodReprod) {
+        return (static_cast<double>(rand()) / RAND_MAX) < ProBirthRenard; // Vérifie si la reproduction réussit
     }
     else if (nbVoisin >= MinFreeBirthLapin) {
-        return true;
+        return (static_cast<double>(rand()) / RAND_MAX) < ProBirthLapin; // Vérifie si la reproduction réussit
     }
     return false;
 }
-
 
 void Animal::mange() {
     if (espece == Espece::Lapin) {
