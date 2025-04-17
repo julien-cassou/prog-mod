@@ -74,7 +74,7 @@ const int MaxFood = 10;
 class Animal {
     public:
         // Constructeurs
-        Animal();
+        // Animal();
         Animal(int id, Espece espece, Coord coord);
         // accesseurs
         int getId() const;

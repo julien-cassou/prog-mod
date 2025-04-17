@@ -302,6 +302,8 @@ TEST_CASE("affichage espèce") {
     CHECK(os.str() == "Lapin");
 }
 
+Animal::Animal() : id{-1}, espece
+
 Animal::Animal(int id, Espece espece, Coord coord) : id{id} , espece{espece}, coord{coord}, food{FoodInit} {};
 
 
@@ -377,8 +379,11 @@ void Animal::mange() {
     if (espece == Espece::Lapin) {
         throw runtime_error("Un lapin ne mange que de l'herbe");
     }
-    else {
+    else if (food <= 5) {
         food += FoodLapin;
+    }
+    else {
+        food = MaxFood;
     }
 }
 
