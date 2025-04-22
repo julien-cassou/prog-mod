@@ -10,7 +10,7 @@ using namespace std;
 class Grille {
     public:
         // Constructeur;
-        Grille();
+        Grille(double probLapins, double probRenard);
         // Méthodes
         bool CaseVide(Coord coordonnées) const;
         int getCase(Coord coordonnées) const;
@@ -22,7 +22,12 @@ class Grille {
 
 class Jeu {
     public:
-        Animal ajouteAnimal();
+        // Constructeur
+        Jeu(double probLapins, double probRenard);
+        // méthodes
+        void ajouteAnimal(Espece espece, Coord c);
+        void verifieGrille() const;
+        Ensemble voisinsVides(Coord case) const;
     private:
         Population population;
         Grille grille;

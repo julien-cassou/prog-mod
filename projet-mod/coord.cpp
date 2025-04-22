@@ -106,15 +106,15 @@ Coord::Coord(int entier) {
     ligne = entier / TAILLEGRILLE;
 }
 
-int toInt(const Coord& c) {
-    return c.getLigne() * TAILLEGRILLE + c.getColonne();
+int Coord::toInt() const {
+    return getLigne() * TAILLEGRILLE + getColonne();
 }
 
 // Q12
 
 TEST_CASE("toInt & constructeur à partir d'un entier") {
-    CHECK(toInt(Coord(5,4)) == 204);
-    CHECK(toInt(Coord (0,0)) == 0);
+    CHECK(Coord(5,4).toInt() == 204);
+    CHECK(Coord (0,0).toInt() == 0);
     Coord d {204};
     CHECK(d.getColonne() == 4);
     CHECK(d.getLigne() == 5);
@@ -245,7 +245,7 @@ Ensemble Coord::voisines() const {
         for (int j = j_min; j <= j_max; j++) {
             Coord temp = Coord(i,j);
             if (temp != (Coord (ligne,colonne))) {
-                res.ajoute(toInt(temp));
+                res.ajoute(temp.toInt());
             }
         }
     }
@@ -280,131 +280,3 @@ TEST_CASE("voisines") {
     Ensemble e6 = c6.voisines();
     CHECK(e6.cardinal() == 8);
 }
-
-// Cours TD
-
-
-ostream& operator<<(ostream& out, Espece espece) {
-    switch(espece) {
-        case Espece::Renard: out << "Renard"; break;
-        case Espece::Lapin: out << "Lapin"; break;
-        default: throw runtime_error("espèce non reconnué");
-    }
-    return out;
-}
-
-TEST_CASE("affichage espèce") {
-    ostringstream out;
-    out << Espece::Renard;
-    CHECK(out.str() == "Renard");
-    ostringstream os;
-    os << Espece::Lapin;
-    CHECK(os.str() == "Lapin");
-}
-
-Animal::Animal(int id, Espece espece, Coord coord) : id{id} , espece{espece}, coord{coord}, food{FoodInit} {};
-
-
-int Animal::getId() const {
-    return id;
-}
-
-
-Coord Animal::getCoord() const {
-    return coord;
-}
-
-void Animal::setCoord(Coord c) {
-    coord = c;
-}
-
-Espece Animal::getEspece() const {
-    return espece;
-}
-
-TEST_CASE("constructeur & accesseurs") {
-    Animal a = {23, Espece::Renard, Coord (1,2)};
-    CHECK(a.getId() == 23);
-    CHECK(a.getCoord() == Coord (1,2));
-    a.setCoord(Coord (3,4));
-    CHECK(a.getCoord() == Coord (3,4));
-}
-
-ostream& Animal::affiche(ostream &out) const {
-    out << "Animal: " << id << ", " << espece << ", " << coord;
-    if (espece == Espece::Renard ) {
-        out << ", " << food;
-    } 
-    return out;
-}
-
-bool Animal::estMort() const {
-    if (espece == Espece::Renard) {
-        if (food == 0) {
-            return true;
-        }
-    }
-    return false;
-}  
-
-void Animal::jeune() {
-    if (espece == Espece::Lapin) {
-        throw runtime_error("Un lapin mange tous le temps de l'herbe");
-    }
-    else {
-        food -= 1;
-    }
-}
-
-TEST_CASE("estMort & jeune") {
-    Animal b = {3, Espece::Renard, Coord (6,13)};
-    CHECK_FALSE(b.estMort());
-    for(int i = 1; i <= 5; i++) { b.jeune();}
-    CHECK(b.estMort());
-}
-
-bool Animal::seReproduit(int nbVoisin) const {
-    if (espece == Espece::Renard and food >= FoodReprod) {
-        return (static_cast<double>(rand()) / RAND_MAX) < ProBirthRenard; // Vérifie si la reproduction réussit
-    }
-    else if (nbVoisin >= MinFreeBirthLapin) {
-        return (static_cast<double>(rand()) / RAND_MAX) < ProBirthLapin; // Vérifie si la reproduction réussit
-    }
-    return false;
-}
-
-void Animal::mange() {
-    if (espece == Espece::Lapin) {
-        throw runtime_error("Un lapin ne mange que de l'herbe");
-    }
-    else {
-        food += FoodLapin;
-    }
-}
-
-TEST_CASE("mange") {
-    Animal b = {3, Espece::Renard, Coord (6,13)};
-    for(int i = 1; i <= 5; i++) { b.jeune();}
-    b.mange();
-    CHECK_FALSE(b.estMort());
-    Animal a = {2, Espece::Lapin, Coord (5,13)};
-    CHECK_THROWS_AS(a.mange(), runtime_error);
-}
-
-
-ostream& operator<<(ostream& out, Animal animal) {
-    animal.affiche(out);
-    return out;
-}
-
-TEST_CASE("affichage Animal") {
-    Animal a = {2, Espece::Lapin, Coord (5,13)};
-    ostringstream os;
-    os << a;
-    CHECK(os.str() == "Animal: 2, Lapin, (5,13)");
-    Animal b = {3, Espece::Renard, Coord (6,13)};
-    ostringstream oss;
-    oss << b;
-    CHECK(oss.str() == "Animal: 3, Renard, (6,13), 5");
-}
-
