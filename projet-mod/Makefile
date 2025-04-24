@@ -4,11 +4,11 @@ CXX = g++
 CXXFLAGS = -std=c++17 -Wall -Wextra -std=c++17
 
 # === Fichiers objets ===
-OBJS_TEST = test.o coord.o
-OBJS_MAIN = main.o coord.o
+OBJS_TEST = test.o coord.o Animal.o Jeu.o
+OBJS_MAIN = main.o coord.o Animal.o Jeu.o
 
 # === Exécutables ===
-EXEC_TEST = tests
+EXEC_TEST = test
 EXEC_MAIN = prog
 
 # === Règle par défaut ===

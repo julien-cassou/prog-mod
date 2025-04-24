@@ -1,4 +1,3 @@
-#include "coord.hpp"
 #include "doctest.h"
 #include "Animal.hpp"
 #include <stdexcept>
@@ -30,7 +29,7 @@ TEST_CASE("affichage espèce") {
 
         // Animal
 
-Animal::Animal() : id{-1}, espece{Espece::Lapin}, coord{}, food{0} {};
+Animal::Animal() : id{-1}, espece{Espece::Lapin}, coord{Coord(0,0)}, food{FoodInit} {};
 
 Animal::Animal(int id, Espece espece, Coord coord) : id{id} , espece{espece}, coord{coord}, food{FoodInit} {};
 
@@ -95,10 +94,10 @@ TEST_CASE("estMort & jeune") {
 
 bool Animal::seReproduit(int nbVoisin) const {
     if (espece == Espece::Renard and food >= FoodReprod) {
-        return (static_cast<double>(rand()) / RAND_MAX) < ProBirthRenard; // Vérifie si la reproduction réussit
+        return (static_cast<double>(rand()) / RAND_MAX) < ProBirthRenard;
     }
     else if (nbVoisin >= MinFreeBirthLapin) {
-        return (static_cast<double>(rand()) / RAND_MAX) < ProBirthLapin; // Vérifie si la reproduction réussit
+        return (static_cast<double>(rand()) / RAND_MAX) < ProBirthLapin; 
     }
     return false;
 }
@@ -144,9 +143,6 @@ TEST_CASE("affichage Animal") {
         // Population
 
 Population::Population() {
-    // for (int i = 0; i < MAXCARD; i++) {
-    //     animaux[i] = Animal();
-    // }
     for (int i = 0; i < MAXCARD; i++) {
         id_reserve[i] = false;
     }
@@ -182,16 +178,17 @@ Ensemble Population::getIds() const {
 
 int Population::reserve() {
     int id = id_dispo[id_dispo.size() - 1];
-    id_dispo.pop_back(id);
+    id_dispo.pop_back();
     id_reserve[id] = true;
-    animaux[i] = Animal();
+    animaux[id] = Animal();
+    return id;
 }
 
 void Population::set(int id, Animal animal) {
     animaux[id] = animal;
 }
 
-void supprime(int id) {
+void Population::supprime(int id) {
     id_dispo.push_back(id);
     id_reserve[id] = false;
     animaux[id] = Animal();

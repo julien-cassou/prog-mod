@@ -1,3 +1,5 @@
+#ifndef ANIMAL_HPP
+#define ANIMAL_HPP
 #include <stdexcept>
 #include <ostream>
 #include <vector>
@@ -58,3 +60,5 @@ class Population {
         array<bool,MAXCARD> id_reserve;
         vector<int> id_dispo;
 };
+
+#endif

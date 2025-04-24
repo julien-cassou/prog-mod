@@ -1,6 +1,4 @@
-#include "coord.hpp"
 #include "doctest.h"
-#include "Animal.hpp"
 #include "Jeu.hpp"
 #include <stdexcept>
 #include <sstream>
@@ -63,7 +61,9 @@ Jeu::Jeu(double probLapins, double probRenard) {
 
 
 void Jeu::verifieGrille() const {
-    for (int id = 0; id < population.size(); ++id) {
+    Ensemble identifiant = population.getIds();
+    while(identifiant.cardinal() != 0) {
+        int id = identifiant.tire();
         const Animal& animal = population.get(id);
         Coord c = animal.getCoord();
         if (grille.getCase(c) != id) {
@@ -72,15 +72,81 @@ void Jeu::verifieGrille() const {
     }
 }
 
-Spécifiez et réalisez une méthode voisinsVides qui retourne l’ensemble des cases voi
-sines vides d’une case.
 
-Ensemble Jeu::voisinsVides(Coord case) const {
+Ensemble Jeu::voisinsVides(Coord Case) const {
     Ensemble res;
-    Enemble voisins = case.voisines();
+    Ensemble voisins = Case.voisines();
     while(voisins.cardinal() != 0) {
         Coord temp = voisins.tire();
         if (grille.CaseVide(temp)) res.ajoute(temp.toInt());
     }
     return res;
 }
+
+
+Ensemble Jeu::voisinsEspece(Coord Case, Espece espece) const{
+    Ensemble res;
+    Ensemble voisins = Case.voisines();
+    while(voisins.cardinal() != 0) {
+        Coord temp = voisins.tire();
+        int id = grille.getCase(temp);
+        if (id != -1) {
+            if(population.get(id).getEspece() == espece) {
+                res.ajoute(temp.toInt());
+            }
+        }
+    }
+    return res;
+}
+
+
+void Jeu::Coherence() const {
+    for (int y = 0; y < TAILLEGRILLE; y++) {
+        for (int x = 0; x < TAILLEGRILLE; x++) {
+            Coord Case = Coord {y,x};
+            if (!grille.CaseVide(Case)) {
+                int id = grille.getCase(Case);
+                try {
+                    population.get(id);
+                } catch (const runtime_error ) {
+                    throw runtime_error("L'animal de coordonnées (" + to_string(Case.getLigne()) + ", " + to_string(Case.getColonne()) + "), pour l'ID " + to_string(id) + " n'existe pas dans population.");
+                }
+            }
+        }
+    }
+    Ensemble indices = population.getIds();
+    while(indices.cardinal() != 0) {
+        int temp = indices.tire();
+        Animal actu = population.get(temp);
+        Coord c = actu.getCoord();
+        if (grille.CaseVide(c)) {
+            throw runtime_error("La case de coordonnées (" + to_string(c.getLigne()) + ", " + to_string(c.getColonne()) + ") est vide alors qu'elle devrait contenir l'Animal d'id :" + to_string(temp));
+        }
+    }
+}
+
+
+void Jeu::DeplaceAnimal(Animal &animal) {
+    Coord c = animal.getCoord();
+    int id = animal.getId();
+    Ensemble libre;
+    if(animal.getEspece() == Espece::Lapin) {
+        libre = voisinsVides(c);
+    }
+    else {
+        libre = voisinsEspece(c, Espece::Lapin);
+        if (libre.cardinal() == 0) libre = voisinsVides(c);
+        else animal.mange();
+        animal.jeune();
+    }
+    int temp = libre.tire();
+    Coord case_nouvelle = Coord {temp};
+    grille.VideCase(c);
+    grille.setCase(case_nouvelle, id);
+    animal.setCoord(case_nouvelle);
+    Coherence();
+}
+
+
+
+

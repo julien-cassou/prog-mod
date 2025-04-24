@@ -83,11 +83,11 @@ TEST_CASE("Affichage Coord") {
 
         // Julien Cassou
 // Q10
-bool operator==(const Coord& c, const Coord&d) {
+bool operator==(const Coord &c, const Coord &d) {
     return c.getLigne() == d.getLigne() && c.getColonne() == d.getColonne();
 }
 
-bool operator!=(const Coord& c, const Coord&d) {
+bool operator!=(const Coord &c, const Coord&d) {
     return !(c == d);
 }
 
@@ -168,6 +168,9 @@ void Ensemble::ajoute(int entier) {
     card++;
 }
 
+/** tire
+ * @return l'indice d'un des membres de l'ensemble de manière aléatoire
+ **/
 int Ensemble::tire() {
     if (cardinal() == 0) {
         throw runtime_error("L'ensemble est vide");

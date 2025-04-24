@@ -1,3 +1,5 @@
+#ifndef JEU_HPP
+#define JEU_HPP
 #include <stdexcept>
 #include <ostream>
 #include <vector>
@@ -10,7 +12,7 @@ using namespace std;
 class Grille {
     public:
         // Constructeur;
-        Grille(double probLapins, double probRenard);
+        Grille();
         // Méthodes
         bool CaseVide(Coord coordonnées) const;
         int getCase(Coord coordonnées) const;
@@ -27,8 +29,13 @@ class Jeu {
         // méthodes
         void ajouteAnimal(Espece espece, Coord c);
         void verifieGrille() const;
-        Ensemble voisinsVides(Coord case) const;
+        Ensemble voisinsVides(Coord Case) const;
+        Ensemble voisinsEspece(Coord Case, Espece espece) const;
+        void DeplaceAnimal(Animal &animal);
+        void Coherence() const;
     private:
         Population population;
         Grille grille;
 };
+
+#endif
