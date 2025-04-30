@@ -7,9 +7,9 @@ using namespace std;
 
 enum class Espece {Lapin, Renard};
 
-const float ProBirthLapin = 0.30;
-const int MinFreeBirthLapin = 4;
-const float ProBirthRenard = 0.05;
+const float ProBirthLapin = 0.20;
+const int MinFreeBirthLapin = 5;
+const float ProBirthRenard = 0.10;
 
 const int FoodInit = 5;
 const int FoodLapin = 5;
@@ -19,7 +19,6 @@ const int MaxFood = 10;
 class Animal {
     public:
         // Constructeurs
-        Animal();
         Animal(int id, Espece espece, Coord coord);
         // accesseurs
         int getId() const;
@@ -33,7 +32,8 @@ class Animal {
         // modification
         void mange();
         void jeune();
-    private:
+        // débogage
+        int getFood() const { return food; }
         int id;
         Espece espece;
         Coord coord;
@@ -51,10 +51,13 @@ class Population {
         Animal get(int id) const;
         Ensemble getIds() const;
         int reserve();
-        void set(int id, Animal animal);
+        void set(Animal &animal);
         void supprime(int id);
+        // débogage & tests
+        bool estPresent(int id) const;  
+        const vector<Animal>& getAnimaux() const { return animaux; }
     private:
-        array<Animal,MAXCARD> animaux;
+        vector<Animal> animaux;
         array<bool,MAXCARD> id_reserve;
         vector<int> id_dispo;
 };
