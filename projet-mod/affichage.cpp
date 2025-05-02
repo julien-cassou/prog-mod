@@ -1,5 +1,6 @@
+// g++ affichage.cpp -o affichage -lsfml-graphics -lsfml-window -lsfml-system -I"/SFML/include"
 #include <iostream>
-#include "SFML/Graphics.hpp"
+#include <SFML/Graphics.hpp>
 
 int main() {
     // Créer une fenêtre de 800x600 pixels avec le titre "Test SFML"
