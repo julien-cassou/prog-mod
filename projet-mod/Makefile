@@ -1,31 +1,28 @@
-
-# === Variables ===
 CXX = g++
 CXXFLAGS = -std=c++17 -Wall -Wextra -std=c++17
 
-# === Fichiers objets ===
-OBJS_TEST = test.o coord.o Animal.o Jeu.o
+OBJS_TEST1 = test.o coord.o
+OBJS_TEST2 = test2.o coord.o Animal.o Jeu.o
 OBJS_MAIN = main.o coord.o Animal.o Jeu.o
 
-# === Exécutables ===
-EXEC_TEST = test
+EXEC_TEST1 = test
+EXEC_TEST2 = test2
 EXEC_MAIN = prog
 
-# === Règle par défaut ===
-all: $(EXEC_TEST)
+all: $(EXEC_MAIN) $(EXEC_TEST1) $(EXEC_TEST2)
 
-# === Compilation du programme principal ===
 $(EXEC_MAIN): $(OBJS_MAIN)
 	$(CXX) -o $@ $^
 
-# === Compilation des tests ===
-$(EXEC_TEST): $(OBJS_TEST)
+$(EXEC_TEST1): $(OBJS_TEST1)
 	$(CXX) -o $@ $^
 
-# === Compilation des fichiers .cpp en .o ===
+$(EXEC_TEST2): $(OBJS_TEST2)
+	$(CXX) -o $@ $^
+
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-# === Nettoyage ===
+
 clean:
-	rm -f *.o $(EXEC_TEST) $(EXEC_MAIN)
+	rm -f *.o *.ppm *.exe $(EXEC_TEST) $(EXEC_MAIN)

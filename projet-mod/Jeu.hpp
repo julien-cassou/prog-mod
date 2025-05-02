@@ -1,10 +1,8 @@
-#ifndef JEU_HPP
-#define JEU_HPP
 #include <stdexcept>
 #include <ostream>
 #include <vector>
 #include <array>
-#include "coord.hpp"
+#include <string>
 #include "Animal.hpp"
 using namespace std;
 
@@ -29,13 +27,16 @@ class Jeu {
         // méthodes
         void ajouteAnimal(Espece espece, Coord c);
         void verifieGrille() const;
-        Ensemble voisinsVides(Coord Case) const;
-        Ensemble voisinsEspece(Coord Case, Espece espece) const;
-        void DeplaceAnimal(Animal &animal);
+        Ensemble voisinsVides(Coord c) const;
+        Ensemble voisinsEspece(Coord c, Espece espece) const;
+        void DeplaceAnimal(int id);
         void Coherence() const;
+        void simulation(int Tours);
+        void affichage() const;
+        void genereImagePPM(const string& nomFichier) const;
+        // accesseur --> test
+        Population getPopulation() const;
     private:
         Population population;
         Grille grille;
 };
-
-#endif

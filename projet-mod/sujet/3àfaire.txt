@@ -1,0 +1,41 @@
+ 1.Déplacement des animaux dans un ordre aléatoire : si dans dans un premier temps, vous
+ avez effectué les déplacements en parcourant la grille ligne à ligne, faites en sorte de choisir l’ordre
+ des animaux à déplacer de façon aléatoire (utilisation d’ensemble et de tirage)
+
+ 2. Tenir compte de l’age des animaux : un animal trop vieux meurt de vieillesse.
+
+ 3. Reproduction sexuée : un animal ne peut se reproduire que s’il rencontre un autre animal de
+ la même espèce. Dans une version avancée, on peut de plus tenir compte du sexe.
+
+ 4. Génération de statistiques et courbes d’évolution On pourra étudier l’évolution du nombre
+ de lapins / renard au cours du temps et générer des fichiers de données (en csv) qu’on pourra
+ ensuite afficher dans un notebook python sous forme de courbes.
+
+ 5. Configuration de la simulation : plutôt que d’utiliser des constantes, donner la possibilité de
+ configurer la simulation (différentes probabilités et valeurs) à l’exécution
+
+ 6. Simulation graphique interactive : on peut développer une simulation graphique avec SFML
+ et rajouter de l’interactivité (pause / play, modification des paramètres, etc.)
+
+ 7. D’autres idées? Ce projet vous amuse et vous avez envie d’explorer d’autres idées, par exemple
+ en modifiant le comportement des animaux ou en ajoutant d’autres espèces, vous êtes libres! (Mais
+ gardez bien la simulation originale
+
+
+fait :
+	- 1
+	- 2
+à faire:
+	- 3 (prio 4)
+	- 4 (prio 2)
+	- 5 (prio 3 facile)
+	- 6 (prio)
+
+
+
+problème rencontré:
+	-tire() dans voisinvides qui dupliquait des coordonnées, engendre alors un probleme dans déplace
+	car certain animaux n'existaient plus
+	-je me suis rendu compte tard que les renards pouvaient mourrir à n'importe quel age, problème fonction meurt
+	-du mal à coder déplaceAnimal, bcp de bug
+	-

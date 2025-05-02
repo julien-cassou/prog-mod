@@ -1,5 +1,7 @@
+#include "coord.hpp"
 #include "doctest.h"
 #include "Animal.hpp"
+#include <iostream>
 #include <stdexcept>
 #include <sstream>
 #include <vector>
@@ -9,6 +11,7 @@ using namespace std;
 
         // Espece
 
+// implémenté par Julien Cassou
 ostream& operator<<(ostream& out, Espece espece) {
     switch(espece) {
         case Espece::Renard: out << "Renard"; break;
@@ -18,64 +21,60 @@ ostream& operator<<(ostream& out, Espece espece) {
     return out;
 }
 
-TEST_CASE("affichage espèce") {
-    ostringstream out;
-    out << Espece::Renard;
-    CHECK(out.str() == "Renard");
-    ostringstream os;
-    os << Espece::Lapin;
-    CHECK(os.str() == "Lapin");
-}
-
         // Animal
 
-Animal::Animal() : id{-1}, espece{Espece::Lapin}, coord{Coord(0,0)}, food{FoodInit} {};
+// implémenté par Julien Cassou
+Animal::Animal(int id, Espece espece, Coord coord, int food, int age) : id{id}, espece{espece}, coord{coord}, food{food}, age{age} {};
 
-Animal::Animal(int id, Espece espece, Coord coord) : id{id} , espece{espece}, coord{coord}, food{FoodInit} {};
-
-
+// implémenté par Julien Cassou
 int Animal::getId() const {
     return id;
 }
 
-
+// implémenté par Julien Cassou
 Coord Animal::getCoord() const {
     return coord;
 }
 
+// implémenté par Julien Cassou
 void Animal::setCoord(Coord c) {
     coord = c;
 }
 
+// implémenté par Julien Cassou
 Espece Animal::getEspece() const {
     return espece;
 }
 
-TEST_CASE("constructeur & accesseurs") {
-    Animal a = {23, Espece::Renard, Coord (1,2)};
-    CHECK(a.getId() == 23);
-    CHECK(a.getCoord() == Coord (1,2));
-    a.setCoord(Coord (3,4));
-    CHECK(a.getCoord() == Coord (3,4));
+// implémenté par Julien Cassou
+int Animal::getAge() const {
+    return age;
 }
 
+// implémenté par Julien Cassou
 ostream& Animal::affiche(ostream &out) const {
-    out << "Animal: " << id << ", " << espece << ", " << coord;
+    out << "Animal: " << id << ", " << espece << ", " << coord << ", " << age;
     if (espece == Espece::Renard ) {
         out << ", " << food;
     } 
     return out;
 }
 
-bool Animal::estMort() const {
-    if (espece == Espece::Renard) {
-        if (food == 0) {
-            return true;
-        }
-    }
-    return false;
-}  
+// implémenté par Julien Cassou
+void Animal::vieilli() {
+    age++;
+}
 
+// implémenté par Julien Cassou
+bool Animal::estMort() const {
+    double prob = static_cast<double>(rand()) / RAND_MAX;
+    if (espece == Espece::Renard) {
+        return (food <= 0) or (age >= 5 && prob < ProbMort) or (age >= 15);
+    }
+    return (age >=  8);
+}  
+    
+// implémenté par Julien Cassou
 void Animal::jeune() {
     if (espece == Espece::Lapin) {
         throw runtime_error("Un lapin mange tous le temps de l'herbe");
@@ -85,23 +84,20 @@ void Animal::jeune() {
     }
 }
 
-TEST_CASE("estMort & jeune") {
-    Animal b = {3, Espece::Renard, Coord (6,13)};
-    CHECK_FALSE(b.estMort());
-    for(int i = 1; i <= 5; i++) { b.jeune();}
-    CHECK(b.estMort());
-}
-
+// implémenté par Julien Cassou
 bool Animal::seReproduit(int nbVoisin) const {
-    if (espece == Espece::Renard and food >= FoodReprod) {
-        return (static_cast<double>(rand()) / RAND_MAX) < ProBirthRenard;
+    if ((espece == Espece::Renard) and (food >= FoodReprod)) {
+        return (static_cast<double>(rand()) / RAND_MAX) < ProBirthRenard; // Vérifie si la reproduction réussit
     }
-    else if (nbVoisin >= MinFreeBirthLapin) {
-        return (static_cast<double>(rand()) / RAND_MAX) < ProBirthLapin; 
+    else if (espece == Espece::Lapin and nbVoisin >= MinFreeBirthLapin) {
+        return (static_cast<double>(rand()) / RAND_MAX) < ProBirthLapin; // Vérifie si la reproduction réussit
     }
-    return false;
+    else {
+        return false;
+    }
 }
 
+// implémenté par Julien Cassou
 void Animal::mange() {
     if (espece == Espece::Lapin) {
         throw runtime_error("Un lapin ne mange que de l'herbe");
@@ -114,83 +110,92 @@ void Animal::mange() {
     }
 }
 
-TEST_CASE("mange") {
-    Animal b = {3, Espece::Renard, Coord (6,13)};
-    for(int i = 1; i <= 5; i++) { b.jeune();}
-    b.mange();
-    CHECK_FALSE(b.estMort());
-    Animal a = {2, Espece::Lapin, Coord (5,13)};
-    CHECK_THROWS_AS(a.mange(), runtime_error);
-}
 
 
+// implémenté par Julien Cassou
 ostream& operator<<(ostream& out, Animal animal) {
     animal.affiche(out);
     return out;
 }
 
-TEST_CASE("affichage Animal") {
-    Animal a = {2, Espece::Lapin, Coord (5,13)};
-    ostringstream os;
-    os << a;
-    CHECK(os.str() == "Animal: 2, Lapin, (5,13)");
-    Animal b = {3, Espece::Renard, Coord (6,13)};
-    ostringstream oss;
-    oss << b;
-    CHECK(oss.str() == "Animal: 3, Renard, (6,13), 5");
-}
-
         // Population
 
-Population::Population() {
+// implémenté par Julien Cassou
+Population::Population() : id_dispo() {
     for (int i = 0; i < MAXCARD; i++) {
         id_reserve[i] = false;
+        id_dispo.push_back(i + 1);
     }
-    for (int i = 0; i < MAXCARD; i++) {
-        id_dispo[i] = i;
-    }
+    animaux.clear();
 }
 
-
+// implémenté par Julien Cassou
 Animal Population::get(int id) const {
-    for (int i = 0; i < MAXCARD; i++) {
-        if (id_reserve[i] == id) {
-            for (int j = 0; j < MAXCARD; j++) {
-                if (animaux[j].getId() == id) { 
-                    return animaux[j];
-                }
-            }
+    for (size_t i = 0; i < animaux.size(); i++) {
+        if (animaux[i].getId() == id) { 
+            return animaux[i];
         }
     }
     throw runtime_error("L'animal n'existe pas");
 }
 
-
+// implémenté par Julien Cassou
 Ensemble Population::getIds() const {
-    Ensemble indice;
-    for (const auto& animal: animaux) {
-        int temp = animal.getId();
-        if (temp != -1) indice.ajoute(temp);
-    }
-    return indice;
+	Ensemble indice;
+	for(size_t i = 0; i < animaux.size(); i++) {
+		indice.ajoute(animaux[i].getId());
+	}
+	return indice;
 }
 
-
+// implémenté par Julien Cassou
 int Population::reserve() {
-    int id = id_dispo[id_dispo.size() - 1];
+    if (id_dispo.empty()) {
+        throw runtime_error("Aucun ID disponible pour la réservation");
+    }
+    int id = id_dispo.back();
     id_dispo.pop_back();
-    id_reserve[id] = true;
-    animaux[id] = Animal();
+    id_reserve[id -1] = true;
     return id;
 }
 
-void Population::set(int id, Animal animal) {
-    animaux[id] = animal;
+// implémenté par Julien Cassou
+void Population::set(Animal &animal) {
+    if (id_dispo.empty()) {
+        throw runtime_error("Aucun ID disponible");
+    }
+    int id = reserve();
+    Coord c = animal.getCoord();
+    Espece e = animal.getEspece();
+    int f = animal.getFood();
+    int a = animal.getAge();
+    animal = Animal(id, e, c, f, a);
+    animaux.push_back(animal);
 }
 
+// implémenté par Julien Cassou
 void Population::supprime(int id) {
-    id_dispo.push_back(id);
-    id_reserve[id] = false;
-    animaux[id] = Animal();
+    for (size_t i = 0; i < animaux.size(); i++) {
+		if (animaux[i].getId() == id) {
+            id_dispo.push_back(id);
+			animaux.erase(animaux.begin() + i);
+            id_reserve[id - 1] = false;
+			return;
+		}
+	} throw runtime_error("Cette ID n'existe pas");
+}
+
+/** fonction permettant de vérifiant la présence d'un animal dans une population
+ * @param entier id désignant l'identifiant de l'animal
+ * @return vrai si il est dans la population, sinon non
+ */
+// implémenté par Julien Cassou
+bool Population::estPresent(int id) const {
+    for (size_t i = 0; i < animaux.size(); i++) {
+        if (animaux[i].getId() == id) {
+            return true;
+        }
+    }
+    return false;
 }
 
