@@ -7,8 +7,8 @@
 #include <sstream>
 #include <vector>
 #include <array>
-#include <locale>
-#include <fstream>
+#include <algorithm>
+#include <SFML/Graphics.hpp>
 using namespace std;
 
 // Configuration de l'affichage UTF-8
@@ -216,6 +216,7 @@ void Jeu::DeplaceAnimal(int id) {
     }
 }
 
+<<<<<<< Updated upstream
 
 
 void Jeu::affichage() const{
@@ -230,11 +231,71 @@ void Jeu::affichage() const{
                 if (e == Espece::Lapin) cout << "L";
                 else if (e == Espece::Renard) cout << "R";
                 }
-            }
-    cout << endl;
-    }
-}   
+=======
+void creerParam(sf::RenderWindow& window, Param &p) {
+    int parametreActif = 0;
+    std::vector<std::string> noms = {"Probabilité reproduction lapin", "Probabilité reproduction renard", "Proabilité Lapins", "Probabilité Renard", "Nb Tours"};
+    std::vector<float*> valeurs = {
+        &p.ProBirthLapin, 
+        &p.ProBirthRenard, 
+        &p.ProbSpawnLapins, 
+        &p.ProbSpawnRenards, 
+        reinterpret_cast<float*>(&p.NbTours),
+    };
 
+    sf::Event event;
+    while (window.pollEvent(event)) {
+        if (event.type == sf::Event::Closed) {
+            window.close();
+        }
+        if (event.key.code == sf::Keyboard::Enter) {
+            window.close();
+        }
+        if (event.type == sf::Event::KeyPressed) {
+            if (event.key.code == sf::Keyboard::Down) {
+                parametreActif = (parametreActif + 1) % noms.size();
+>>>>>>> Stashed changes
+            }
+            if (event.key.code == sf::Keyboard::Up) {
+                parametreActif = (parametreActif - 1 + noms.size()) % noms.size();
+            }
+            if (event.key.code == sf::Keyboard::Right) {
+                if (parametreActif == 4) {
+                    *valeurs[parametreActif] = min(200, (int)(*valeurs[parametreActif] + 5));
+                }
+                *valeurs[parametreActif] += 0.1f;
+            }
+            if (event.key.code == sf::Keyboard::Left) {
+                if (parametreActif == 4) {
+                    *valeurs[parametreActif] = max(1, (int)(*valeurs[parametreActif] - 1));
+                }
+                *valeurs[parametreActif] = max(0.01f, *valeurs[parametreActif] - 0.01f);
+            }
+        }
+    }
+
+    window.clear();
+    sf::Font font;
+    if (!font.loadFromFile("arial.ttf")) {
+        throw std::runtime_error("La police ne se charge pas");
+    }
+    
+    sf::Text text;
+    text.setFont(font);
+    text.setCharacterSize(20);
+    text.setFillColor(sf::Color::White);
+    
+    for (size_t i = 0; i < noms.size(); ++i) {
+        text.setString(noms[i] + ": " + std::to_string(*valeurs[i]));
+        text.setPosition(10, 30 + i * 30);
+        window.draw(text);
+    }
+
+    window.display();
+}
+
+
+<<<<<<< Updated upstream
 void Jeu::simulation(int Tours) {
     cout << "\n=== ÉTAT INITIAL ===" << endl;
     cout << "Nombre total d'animaux: " << population.getIds().cardinal() << endl;
@@ -329,34 +390,168 @@ void Jeu::genereImagePPM(const string& nomFichier) const {
     ofstream fichier(nomFichier);
     if (!fichier) {
         throw runtime_error("Impossible d'ouvrir le fichier " + nomFichier);
+=======
+// implémenté par Julien Cassou
+void Jeu::simulation(int nbTours, sf::RenderWindow& window, const Param &p) {
+    sf::Clock clock;
+    int nbtours = 1;
+    bool enPause = false;
+    vector<float> timespeed = {0.25f ,0.75f ,1.5f ,2.0f, 2.5f, 3.0f, 5.0f};
+    int indice = 3;
+
+    while (window.isOpen() && nbtours <= nbTours) {
+        sf::Event event;
+        while (window.pollEvent(event)) {
+            if (event.type == sf::Event::Closed)
+                window.close();
+
+            if (event.type == sf::Event::KeyPressed) {
+                if (event.key.code == sf::Keyboard::Space) {
+                    enPause = !enPause;
+                }
+                if (event.key.code == sf::Keyboard::Right) {
+                    indice = max(0, indice - 1);
+                }
+                if (event.key.code == sf::Keyboard::Left) {
+                    indice = min(6, indice + 1);
+                }
+            }
+        }
+        if (!enPause and clock.getElapsedTime().asSeconds() >= timespeed[indice]) {
+            effectuerUnTour(p);
+            nbtours++;
+            clock.restart();
+        }
+
+        window.clear();
+        afficherEtat(window, nbtours);
+        window.display();
     }
 
-    // En-tête PPM
-    fichier << "P3" << endl;
-    fichier << TAILLEGRILLE << " " << TAILLEGRILLE << endl;
-    fichier << "255" << endl;
+    sf::Font font;
+    if (!font.loadFromFile("arial.ttf")) {
+        throw runtime_error("la police ne se charge pas");
+    }
+    sf::Text fin;
+    fin.setFont(font);
+    fin.setCharacterSize(32);
+    fin.setFillColor(sf::Color::Green);
+    fin.setString("Simulation terminee");
+    fin.setPosition(250, Hwindow / 2);
 
-    // Données de l'image
-    for (int i = 0; i < TAILLEGRILLE; i++) {
-        for (int j = 0; j < TAILLEGRILLE; j++) {
+    while (window.isOpen()) {
+        sf::Event event;
+        while (window.pollEvent(event)) {
+            if (event.type == sf::Event::Closed) {
+                window.close();
+            }
+            if (event.key.code == sf::Keyboard::Escape) {
+                window.close();
+            }
+        }
+
+        window.clear();
+        window.draw(fin);
+        window.display();
+    }
+}
+
+void Jeu::effectuerUnTour(const Param &p) {
+    Ensemble Ids = population.getIds();
+    while (!Ids.estVide()) {
+        int temp = Ids.tire();
+        if (!population.estPresent(temp)) continue;
+
+        Animal actu = population.get(temp);
+        Coord c = actu.getCoord();
+        Ensemble vide = voisinsVides(c);
+        Espece e = actu.getEspece();
+
+        try {
+            DeplaceAnimal(temp);
+            if (actu.seReproduit(vide.cardinal(), p)) {
+                Animal nouveau(0, e, c, FoodInit, 0);
+                population.set(nouveau);
+                grille.setCase(c, nouveau.getId());
+            }
+        } catch (const std::runtime_error& e) {
+            std::cerr << "ERREUR - " << temp << ": " << e.what() << std::endl;
+        }
+
+        try {
+            Coherence();
+        } catch (const std::runtime_error& e) {
+            std::cerr << "ERREUR DE COHÉRENCE: " << e.what() << std::endl;
+        }
+    }
+}
+
+
+void Jeu::afficherEtat(sf::RenderWindow& window, int nbtours) const {
+    Ensemble Ids = population.getIds();
+    Ensemble lapin, renard;
+    int tot = Ids.cardinal();
+    while (!Ids.estVide()) {
+        int temp = Ids.tire();
+        Animal actuel = population.get(temp);
+        if (actuel.getEspece() == Espece::Lapin)
+            lapin.ajoute(temp);
+        else
+            renard.ajoute(temp);
+>>>>>>> Stashed changes
+    }
+
+    sf::Font font;
+    if (!font.loadFromFile("arial.ttf")) {
+        throw runtime_error("la police ne se charge pas");
+    }
+
+    sf::Text tour;
+    tour.setFont(font);
+    tour.setCharacterSize(24);
+    tour.setFillColor(sf::Color::White);
+    tour.setPosition(10, 10);
+    tour.setString("Tours : " + std::to_string(nbtours));
+
+    sf::Text texte;
+    texte.setFont(font);
+    texte.setCharacterSize(20);
+    texte.setFillColor(sf::Color::White);
+    std::ostringstream oss;
+    oss << "Total animaux: " << tot << "\n"
+        << "Lapins: " << lapin.cardinal() << "\n"
+        << "Renards: " << renard.cardinal();
+    texte.setString(oss.str());
+    texte.setPosition(620, 50);
+
+    window.draw(tour);
+    window.draw(texte);
+
+    for (int i = 0; i < TAILLEGRILLE; ++i) {
+        for (int j = 0; j < TAILLEGRILLE; ++j) {
+            sf::RectangleShape cellule(sf::Vector2f(taille, taille));
+            float posY = Hwindow - (i + 1) * taille; // permet de faire partir la grille d'en bas à droite
+            cellule.setPosition(j * taille, posY);
+            cellule.setOutlineThickness(1);
+            cellule.setOutlineColor(sf::Color::Black);
+
             Coord c(i, j);
             if (grille.CaseVide(c)) {
-                // Case vide en blanc
-                fichier << "255 255 255 ";
+                cellule.setFillColor(sf::Color::White);
             } else {
                 int id = grille.getCase(c);
                 Espece e = population.get(id).getEspece();
                 if (e == Espece::Lapin) {
-                    // Lapin en bleu
-                    fichier << "0 0 255 ";
-                } else {
-                    // Renard en rouge
-                    fichier << "255 0 0 ";
+                        cellule.setFillColor(sf::Color::Blue);
+                    }
+                else {
+                    cellule.setFillColor(sf::Color::Red);
                 }
             }
+            window.draw(cellule);
         }
-        fichier << endl;
     }
+<<<<<<< Updated upstream
 }
 
 // MASSI
@@ -387,4 +582,7 @@ void Jeu::genereImagePPM(const string& nomFichier) const {
 //         return population;
 // }
 // }
+>>>>>>> Stashed changes
+=======
+}
 >>>>>>> Stashed changes

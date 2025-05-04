@@ -7,14 +7,31 @@ using namespace std;
 
 enum class Espece {Lapin, Renard};
 
-const float ProBirthLapin = 0.20;
+// const float ProBirthLapin = 0.20;
 const int MinFreeBirthLapin = 5;
+<<<<<<< Updated upstream
 const float ProBirthRenard = 0.10;
+=======
+// const float ProBirthRenard = 0.10;
+>>>>>>> Stashed changes
 
 const int FoodInit = 5;
 const int FoodLapin = 5;
 const int FoodReprod = 8;
 const int MaxFood = 10;
+<<<<<<< Updated upstream
+=======
+const int AgeInit = 0;
+
+struct Param {
+    float ProBirthLapin, ProBirthRenard, ProbSpawnLapins, ProbSpawnRenards;
+    int NbTours;
+
+    // Constructeur par défault pour garder les valeurs initiales
+    Param() : ProBirthLapin(0.20), ProBirthRenard(0.10), ProbSpawnLapins(0.20), ProbSpawnRenards(0.07), NbTours(50) {};
+};
+
+>>>>>>> Stashed changes
 
 class Animal {
     public:
@@ -28,7 +45,7 @@ class Animal {
         ostream& affiche(ostream &out) const;
         // predicats
         bool estMort() const;
-        bool seReproduit(int nbvoisin) const;
+        bool seReproduit(int nbvoisin, const Param &p) const;
         // modification
         void mange();
         void jeune();

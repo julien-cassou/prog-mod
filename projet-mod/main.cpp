@@ -11,11 +11,16 @@
 #include "coord.hpp"
 =======
 #include "Jeu.hpp"
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
+#include <SFML/Graphics.hpp>
 >>>>>>> Stashed changes
 using namespace std;
 
 //question 8
 int main() {
+<<<<<<< Updated upstream
     Jeu jouer(0.20, 0.07);
     // Jeu jouer(0.1, 0.1);
     jouer.simulation(5);
@@ -77,5 +82,16 @@ int main() {
     }else{ cout << e;}
 =======
 >>>>>>> Stashed changes
+=======
+    Param param;
+    sf::RenderWindow fenetre(sf::VideoMode(300,400), "Paramètres");
+    // creerParam(fenetre, p);
+    // cout << "Lancement du jeu" << endl;
+    // Jeu jouer(0.20, 0.07);
+    // sf::RenderWindow window(sf::VideoMode(Lwindow, Hwindow), "Simulation");
+    // jouer.simulation(200, window);
+    // cout << "fin du Jeu";
+>>>>>>> Stashed changes
     return 0;
 }
+

@@ -58,9 +58,13 @@ ostream& Animal::affiche(ostream &out) const {
 
 bool Animal::estMort() const {
     if (espece == Espece::Renard) {
+<<<<<<< Updated upstream
         if (food <= 0) {
             return true;
         }
+=======
+        return (food <= 0) or (age >= 5 && prob < 0.4) or (age >= 15);
+>>>>>>> Stashed changes
     }
     return false;
 }  
@@ -74,6 +78,7 @@ void Animal::jeune() {
     }
 }
 
+<<<<<<< Updated upstream
 
 
 bool Animal::seReproduit(int nbVoisin) const {
@@ -82,6 +87,15 @@ bool Animal::seReproduit(int nbVoisin) const {
     }
     else if (nbVoisin >= MinFreeBirthLapin) {
         return (static_cast<double>(rand()) / RAND_MAX) < ProBirthLapin; // Vérifie si la reproduction réussit
+=======
+// implémenté par Julien Cassou
+bool Animal::seReproduit(int nbVoisin, const Param &p) const {
+    if ((espece == Espece::Renard) and (food >= FoodReprod)) {
+        return (static_cast<double>(rand()) / RAND_MAX) < p.ProBirthRenard; // Vérifie si la reproduction réussit
+    }
+    else if (espece == Espece::Lapin and nbVoisin >= MinFreeBirthLapin) {
+        return (static_cast<double>(rand()) / RAND_MAX) < p.ProBirthLapin; // Vérifie si la reproduction réussit
+>>>>>>> Stashed changes
     }
     return false;
 }
