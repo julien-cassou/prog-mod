@@ -1,0 +1,28 @@
+# === Variables ===
+CXX = g++
+CXXFLAGS = -std=c++17 -Wall -Wextra
+SRC = coord\ copie.cpp main\ copie.cpp
+EXEC = simulation
+
+# === Règle par défaut ===
+all: $(EXEC)
+
+# === Compilation de la simulation ===
+$(EXEC): $(SRC)
+	$(CXX) $(CXXFLAGS) $(SRC) -o $(EXEC)
+
+# === Lancer la simulation ===
+run: $(EXEC)
+	./$(EXEC)
+
+# === Compiler les tests ===
+test:
+	$(CXX) $(CXXFLAGS) tests/test\ copie.cpp coord\ copie.cpp -o tests/tests
+
+# === Lancer les tests ===
+runtest: test
+	./tests/tests
+
+# === Nettoyage des fichiers générés ===
+clean:
+	rm -f *.o $(EXEC) tests/tests
