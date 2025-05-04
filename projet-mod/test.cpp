@@ -51,7 +51,7 @@ TEST_CASE("Affichage Coord") {
 TEST_CASE("operateur == et !=") {
     Coord c(1,2);
     Coord d(3,4);
-    CHECK( c == Coord (1,2));
+    CHECK(c == Coord (1,2));
     CHECK(c != d);
     CHECK(Coord (0,0) == Coord (0,0));
 }

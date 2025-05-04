@@ -15,21 +15,18 @@ const float taille = 600.f / 40.0;
 class Grille {
     public:
         // Constructeur;
-        Grille() : grille{} {};
+        Grille();
         // Méthodes
         bool CaseVide(Coord coordonnées) const;
-        int getCase(Coord coordonnées, Population pop) const;
+        int getCase(Coord coordonnées) const;
         void VideCase(Coord coordonnées);
         void setCase(Coord coordonnées, int id);
     private:
-        vector<vector<Coord>> grille;
+        array<array<int, TAILLEGRILLE>, TAILLEGRILLE> grille;
 };
 
 class Jeu {
     public:
-<<<<<<< Updated upstream
-        Animal ajouteAnimal();
-=======
         // Constructeur
         Jeu(double probLapins, double probRenard);
         // méthodes
@@ -39,23 +36,11 @@ class Jeu {
         Ensemble voisinsEspece(Coord c, Espece espece) const;
         void DeplaceAnimal(int id);
         void Coherence() const;
-<<<<<<< Updated upstream
-        void simulation(int Tours);
-        void affichage() const;
-        void genereImagePPM(const string& nomFichier) const;
-
-        //massi
-
-        // void afficherGrille() const;
-        // Population getPopulation() const;
->>>>>>> Stashed changes
-=======
         void simulation(int nbTours, sf::RenderWindow& window, const Param &p);
         void effectuerUnTour(const Param &p);
         void afficherEtat(sf::RenderWindow& window, int nbtours) const;
         // accesseur --> test
         Population getPopulation() const;
->>>>>>> Stashed changes
     private:
         Population population;
         Grille grille;

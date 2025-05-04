@@ -42,8 +42,11 @@ class Coord {
     int getLigne() const;
     int getColonne() const;
     Ensemble voisines() const;
+    int toInt();
     // opérateur
     friend ostream &operator<<(ostream& os, const Coord& c);
 };
 
+bool operator==(const Coord &c, const Coord &d);
+bool operator!=(const Coord& c, const Coord&d);
 #endif // COORD_HPP

@@ -33,46 +33,29 @@ ostream &operator<<(ostream& os, const Coord& c) {
     return os;
 }
 
-<<<<<<< Updated upstream
-        // Julien Cassou
-// Q10
-bool operator==(const Coord& c, const Coord&d) {
-=======
+// implémenté par Julien Cassou
 bool operator==(const Coord &c, const Coord &d) {
->>>>>>> Stashed changes
     return c.getLigne() == d.getLigne() && c.getColonne() == d.getColonne();
 }
 
+// implémenté par Julien Cassou
 bool operator!=(const Coord& c, const Coord&d) {
     return !(c == d);
 }
 
+// implémenté par Julien Cassou
 Coord::Coord(int entier) {
     colonne = entier % TAILLEGRILLE;
     entier -= colonne;
     ligne = entier / TAILLEGRILLE;
 }
 
-int toInt(const Coord& c) {
-    return c.getLigne() * TAILLEGRILLE + c.getColonne();
+// implémenté par Julien Cassou
+int Coord::toInt() {
+    return getLigne() * TAILLEGRILLE + getColonne();
 }
 
-<<<<<<< Updated upstream
-// Q12
-
-TEST_CASE("toInt & constructeur à partir d'un entier") {
-    CHECK(toInt(Coord(5,4)) == 204);
-    CHECK(toInt(Coord (0,0)) == 0);
-    Coord d {204};
-    CHECK(d.getColonne() == 4);
-    CHECK(d.getLigne() == 5);
-}       //faut peut être ajouté des tests j'ai pas du faire tous les cas.
-
-// Ex 3
-// Q2
-
-=======
->>>>>>> Stashed changes
+// implémenté par Julien Cassou
 void Ensemble::affiche(ostream& out) const {
     for (int i = 0; i < card; i++) {
         int c = t[i] % TAILLEGRILLE;
@@ -81,12 +64,13 @@ void Ensemble::affiche(ostream& out) const {
     }
 }
 
+// implémenté par Julien Cassou
 ostream &operator<<(ostream& out, const Ensemble& e) {
     e.affiche(out);
     return out;
 }
 
-
+// implémenté par Julien Cassou
 Ensemble::Ensemble() {
     card = 0;
     for (int i = 0; i < MAXCARD; i++) {
@@ -94,16 +78,17 @@ Ensemble::Ensemble() {
     }
 }
 
-
+// implémenté par Julien Cassou
 int Ensemble::cardinal() const{
     return card;
 }
 
+// implémenté par Julien Cassou
 bool Ensemble::estVide() const {
     return (cardinal() == 0);
 }
 
-
+// implémenté par Julien Cassou
 void Ensemble::ajoute(int entier) {
     int c = cardinal();
     if (c >= MAXCARD) {
@@ -116,6 +101,7 @@ void Ensemble::ajoute(int entier) {
     card++;
 }
 
+// implémenté par Julien Cassou
 int Ensemble::tire() {
     if (cardinal() == 0) {
         throw runtime_error("L'ensemble est vide");
@@ -130,8 +116,9 @@ int Ensemble::tire() {
     return elem;
 }
 
-/** méthode pour créer des ensembles de tests **/
-    // Julien
+/** méthode pour créer des ensembles de tests 
+ */
+// implémenté par Julien Cassou
 void Ensemble::nouvelle_ensemble(int taille) {
     Ensemble e;
     for (int i = 0; i < taille; i++) {
@@ -140,7 +127,7 @@ void Ensemble::nouvelle_ensemble(int taille) {
     }
 }
 
-
+// implémenté par Julien Cassou
 Ensemble Coord::voisines() const {
     Ensemble res;
     int i_max = min(ligne + 1, TAILLEGRILLE -1);  //49 
@@ -151,41 +138,9 @@ Ensemble Coord::voisines() const {
         for (int j = j_min; j <= j_max; j++) {
             Coord temp = Coord(i,j);
             if (temp != (Coord (ligne,colonne))) {
-                res.ajoute(toInt(temp));
+                res.ajoute(temp.toInt());
             }
         }
     }
     return res;
-<<<<<<< Updated upstream
-}
-
-// Q2
-
-TEST_CASE("voisines") {
-    Coord c1 = Coord(0,0);
-    Coord c2 = Coord(TAILLEGRILLE - 1,TAILLEGRILLE - 1);
-    Coord c3 = Coord(0,TAILLEGRILLE - 1);
-    Coord c4 = Coord(TAILLEGRILLE - 1,0);
-    Coord c5 = Coord(3,4);
-    Coord c6 = Coord(4,3);
-    Ensemble e1 = c1.voisines();
-    CHECK(e1.cardinal() == 3);
-    ostringstream os;
-    e1.affiche(os);
-    CHECK(os.str() == "(0,1) (1,0) (1,1) ");
-    Ensemble e2 = c2.voisines();
-    CHECK(e2.cardinal() == 3);
-    ostringstream oss;
-    e2.affiche(oss);
-    CHECK(oss.str() == "(38,38) (38,39) (39,38) ");
-    Ensemble e3 = c3.voisines();
-    CHECK(e3.cardinal() ==3);
-    Ensemble e4 = c4.voisines();
-    CHECK(e4.cardinal() == 3);
-    Ensemble e5 = c5.voisines();
-    CHECK(e5.cardinal() == 8);
-    Ensemble e6 = c6.voisines();
-    CHECK(e6.cardinal() == 8);
-=======
->>>>>>> Stashed changes
 }

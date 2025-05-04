@@ -16,38 +16,44 @@ TEST_CASE("affichage espèce") {
     // Animal
 
 TEST_CASE("constructeur & accesseurs") {
-    Animal a = {23, Espece::Renard, Coord (1,2)};
+    Animal a = {23, Espece::Renard, Coord (1,2), FoodInit, AgeInit};
     CHECK(a.getId() == 23);
     CHECK(a.getCoord() == Coord (1,2));
     a.setCoord(Coord (3,4));
     CHECK(a.getCoord() == Coord (3,4));
 }
 
-TEST_CASE("estMort & jeune") {
-    Animal b = {3, Espece::Renard, Coord (6,13)};
+TEST_CASE("estMort & jeune/vieillesse") {
+    Animal b = {3, Espece::Renard, Coord (6,13), FoodInit, AgeInit};
     CHECK_FALSE(b.estMort());
     for(int i = 1; i <= 5; i++) { b.jeune();}
     CHECK(b.estMort());
+    Animal a = {2, Espece::Lapin, Coord{3,19}, FoodInit, AgeInit};
+    for (int j = 1; j < 26; j++) a.vieilli();
+    CHECK(b.estMort());
+    Animal c = {4, Espece::Renard, Coord{4,19}, FoodInit, AgeInit};
+    for (int j = 1; j < 31; j++) c.vieilli();
+    CHECK(c.estMort());
 }
 
 TEST_CASE("mange") {
-    Animal b = {3, Espece::Renard, Coord (6,13)};
+    Animal b = {3, Espece::Renard, Coord (6,13), FoodInit, AgeInit};
     for(int i = 1; i <= 5; i++) { b.jeune();}
     b.mange();
     CHECK_FALSE(b.estMort());
-    Animal a = {2, Espece::Lapin, Coord (5,13)};
+    Animal a = {2, Espece::Lapin, Coord (5,13), FoodInit, AgeInit};
     CHECK_THROWS_AS(a.mange(), runtime_error);
 }
 
 TEST_CASE("affichage Animal") {
-    Animal a = {2, Espece::Lapin, Coord (5,13)};
+    Animal a = {2, Espece::Lapin, Coord (5,13), FoodInit, AgeInit};
     ostringstream os;
     os << a;
-    CHECK(os.str() == "Animal: 2, Lapin, (5,13)");
-    Animal b = {3, Espece::Renard, Coord (6,13)};
+    CHECK(os.str() == "Animal: 2, Lapin, (5,13), 0");
+    Animal b = {3, Espece::Renard, Coord (6,13), FoodInit, AgeInit};
     ostringstream oss;
     oss << b;
-    CHECK(oss.str() == "Animal: 3, Renard, (6,13), 5");
+    CHECK(oss.str() == "Animal: 3, Renard, (6,13), 0, 5");
 }
 
     // Population
@@ -63,12 +69,12 @@ TEST_CASE("Population::reserve") {
 TEST_CASE("Population::set") {
     Population p;
     int id = 1600;
-    Animal a = {0, Espece::Lapin, Coord(4, 0)};
+    Animal a = {0, Espece::Lapin, Coord(4, 0), FoodInit, AgeInit};
     p.set(a);
     CHECK(p.get(id).getId() == 1600);
     CHECK(p.get(id).getEspece() == Espece::Lapin);
     CHECK(p.get(id).getCoord() == Coord(4,0));
-    Animal b = {-1, Espece::Renard, Coord(4, 1)};
+    Animal b = {-1, Espece::Renard, Coord(4, 1), FoodInit, AgeInit};
     p.set(b);
     int id2 = 1599;
     CHECK(p.get(id2).getId() == 1599);
@@ -78,7 +84,7 @@ TEST_CASE("Population::set") {
 
 TEST_CASE("Population::supprime") {
     Population p;
-    Animal a = {0, Espece::Lapin, Coord(0, 0)};
+    Animal a = {0, Espece::Lapin, Coord(0, 0), FoodInit, AgeInit};
     p.set(a);
     int id = 1600;
     p.supprime(id);
@@ -89,8 +95,8 @@ TEST_CASE("Population::getIds") {
     Population p;
     int id1 = 1600;
     int id2 = 1599;
-    Animal a = {0, Espece::Lapin, Coord(0, 0)};
-    Animal b = {0, Espece::Lapin, Coord(1, 0)};
+    Animal a = {0, Espece::Lapin, Coord(0, 0), FoodInit, AgeInit};
+    Animal b = {0, Espece::Lapin, Coord(1, 0), FoodInit, AgeInit};
     p.set(a);
     p.set(b);
     Ensemble ids = p.getIds();
@@ -123,7 +129,11 @@ TEST_CASE("Test ajout et déplacement d'animaux") {
     temp.ajouteAnimal(Espece::Lapin, c1);
     // Déplacement de l'animal
     temp.DeplaceAnimal(1600);
-
+    temp.DeplaceAnimal(1600);
+    temp.DeplaceAnimal(1600);
+    Population p = temp.getPopulation();
+    Animal a = p.get(1600);
+    CHECK(a.getAge() == 3);
     CHECK_NOTHROW(temp.Coherence());
 }
 
@@ -144,7 +154,14 @@ TEST_CASE("case pleine") {
 }
 
 TEST_CASE("mort renard affamé") {
-    Animal r(0, Espece::Renard, Coord(1, 1));
+    Animal r(0, Espece::Renard, Coord(1, 1), FoodInit, AgeInit);
     for (int i = 0; i < 12; ++i) r.jeune();
     CHECK(r.estMort());
+    // dans le jeu
+    Jeu jeu(0.0, 0.0);
+    Coord c(3,3);
+    jeu.ajouteAnimal(Espece::Renard, c);
+    for (int i = 1; i <= 5; i++) jeu.DeplaceAnimal(1600);
+    Population pop = jeu.getPopulation();
+    CHECK_THROWS_AS(pop.get(1600);, runtime_error);
 }

@@ -1,5 +1,3 @@
-<<<<<<< Updated upstream
-=======
 #include <iostream>
 #include "doctest.h"
 #include "Jeu.hpp"
@@ -11,13 +9,9 @@
 #include <SFML/Graphics.hpp>
 using namespace std;
 
-// Configuration de l'affichage UTF-8
-// #ifdef _WIN32
-// #include <windows.h>
-// #endif
-
         // Grille
 
+// implémenté par Julien Cassou
 Grille::Grille() {
     for (int i = 0; i < TAILLEGRILLE; i++) {
         for (int j = 0; j < TAILLEGRILLE; j++) {
@@ -26,18 +20,22 @@ Grille::Grille() {
     }
 }
 
+// implémenté par Julien Cassou
 bool Grille::CaseVide(Coord coordonnées) const {
     return (grille[coordonnées.getLigne()][coordonnées.getColonne()] == 0);
 }
 
+// implémenté par Julien Cassou
 int Grille::getCase(Coord coordonnées) const{
     return grille[coordonnées.getLigne()][coordonnées.getColonne()];
 }
 
+// implémenté par Julien Cassou
 void Grille::VideCase(Coord coordonnées) {
     grille[coordonnées.getLigne()][coordonnées.getColonne()] = 0;
 }
 
+// implémenté par Julien Cassou
 void Grille::setCase(Coord coordonnées, int id) {
     if (!CaseVide(coordonnées)) VideCase(coordonnées);
     grille[coordonnées.getLigne()][coordonnées.getColonne()] = id;
@@ -46,11 +44,12 @@ void Grille::setCase(Coord coordonnées, int id) {
 
         // Jeu
 
+// implémenté par Julien Cassou
 void Jeu::ajouteAnimal(Espece espece, Coord c) {
     if (!grille.CaseVide(c)) {
         throw runtime_error("Case occupée");
     }
-    Animal temp(0, espece, c);
+    Animal temp(0, espece, c, FoodInit, AgeInit);
     population.set(temp);
     int id = temp.getId();
     // cout << "Création " << (espece == Espece::Lapin ? "lapin" : "renard") 
@@ -58,6 +57,7 @@ void Jeu::ajouteAnimal(Espece espece, Coord c) {
     grille.setCase(c, id);
 }
 
+// implémenté par Julien Cassou
 Jeu::Jeu(double probLapins, double probRenard): population{}, grille{} {
     if(probLapins < 0 || probRenard < 0 || (probLapins + probRenard) > 1) {
 		throw invalid_argument("Probabilités invalides");
@@ -76,8 +76,7 @@ Jeu::Jeu(double probLapins, double probRenard): population{}, grille{} {
     }
 }
 
-
-
+// implémenté par Julien Cassou
 void Jeu::verifieGrille() const {
     Ensemble identifiants = population.getIds();
     while(!identifiants.estVide()) {
@@ -92,8 +91,7 @@ void Jeu::verifieGrille() const {
     }
 }
 
-
-
+// implémenté par Julien Cassou
 Ensemble Jeu::voisinsVides(Coord c) const {
     Ensemble res;
     Ensemble voisins = c.voisines();
@@ -104,7 +102,7 @@ Ensemble Jeu::voisinsVides(Coord c) const {
     return res;
 }
 
-
+// implémenté par Julien Cassou
 Ensemble Jeu::voisinsEspece(Coord c, Espece espece) const{
     Ensemble res;
     Ensemble voisins = c.voisines();
@@ -120,7 +118,7 @@ Ensemble Jeu::voisinsEspece(Coord c, Espece espece) const{
     return res;
 }
 
-
+// implémenté par Julien Cassou
 void Jeu::Coherence() const {
     // Vérification grille -> population
     for (int i = 0; i < TAILLEGRILLE; i++) {
@@ -147,7 +145,7 @@ void Jeu::Coherence() const {
     }
 }
 
-
+// implémenté par Julien Cassou
 void Jeu::DeplaceAnimal(int id) {
     try {
         // Vérifier que l'animal existe dans la population
@@ -158,18 +156,39 @@ void Jeu::DeplaceAnimal(int id) {
         Animal animal = population.get(id);
         Coord c = animal.getCoord();
         
+        animal.vieilli();
+        population.supprime(id);
+        population.set(animal);
+        animal = population.get(id);
+        // cout << animal.getAge()<< " " << animal.getFood() << endl;
+        if(animal.estMort()) {
+            // std::cout << "L'animal " + to_string(id) + " de type " + (animal.getEspece() == Espece::Lapin ? "Lapin" : "Renard") + " est mort de vieillesse à " + to_string(animal.getAge()) + " ans" << std::endl;
+            grille.VideCase(c);
+            population.supprime(id);
+            return;
+        }
         
         // Si c'est un renard et qu'il y a un lapin à la destination
         if (animal.getEspece() == Espece::Renard) {
+            animal.jeune();
             Ensemble voisinsDisponibles = voisinsEspece(c, Espece::Lapin);
-            if (!voisinsDisponibles.estVide()) {
-                Coord newCoord(voisinsDisponibles.tire());
-
-                int idProie = grille.getCase(newCoord);
-                animal.jeune();
-             if (animal.estMort()) {
+            if (voisinsDisponibles.estVide()) {
+                if (animal.estMort()) {
                     grille.VideCase(c);
                     population.supprime(id);
+                    // std::cout << "il est mort de faim" << endl;
+                    return;
+                }
+                population.supprime(id);
+                population.set(animal);
+            }
+            else {
+                Coord newCoord(voisinsDisponibles.tire());
+                int idProie = grille.getCase(newCoord);
+                if (animal.estMort()) {
+                    grille.VideCase(c);
+                    population.supprime(id);
+                    // std::cout << "il est mort de faim" << endl;
                     return;
                 }
                 try {
@@ -192,46 +211,29 @@ void Jeu::DeplaceAnimal(int id) {
                 }
             }
         }
-
+        animal = population.get(id);
         Ensemble voisinsDisponibles = voisinsVides(c);
+        if (voisinsDisponibles.estVide()) return;
         Coord newCoord(voisinsDisponibles.tire());
-
-        if (!voisinsDisponibles.estVide()) {
-            // Si la case de destination est vide
-            if (grille.CaseVide(newCoord)) {
-                grille.VideCase(c);
-                grille.setCase(newCoord, id);
-                animal.setCoord(newCoord);
-                // Mise à jour de l'animal dans la population
-                population.supprime(id);
-                population.set(animal);
-                return;
-            }
+        // cout << animal.getAge();
+        // Si la case de destination est vide
+        if (grille.CaseVide(newCoord)) {
+            grille.VideCase(c);
+            grille.setCase(newCoord, id);
+            animal.setCoord(newCoord);
+            // Mise à jour de l'animal dans la population
+            population.supprime(id);
+            population.set(animal);
+            return;
         }
+    
         // Si on arrive ici, le déplacement n'est pas possible
-        
         throw runtime_error("Déplacement impossible : case occupée");
     } catch (const runtime_error& e) {
-        cout << "ERREUR - Animal " << id << ": " << e.what() << endl;
+        std::cout << "ERREUR - Animal " << id << ": " << e.what() << endl;
     }
 }
 
-<<<<<<< Updated upstream
-
-
-void Jeu::affichage() const{
-    for (int i = 0; i < TAILLEGRILLE; i++){
-        for (int j = 0; j < TAILLEGRILLE; j++){
-            Coord c(i, j);
-            if (grille.CaseVide(c)){
-                cout << ".";
-            }else{
-                int id = grille.getCase(c);
-                Espece e = population.get(id).getEspece();
-                if (e == Espece::Lapin) cout << "L";
-                else if (e == Espece::Renard) cout << "R";
-                }
-=======
 void creerParam(sf::RenderWindow& window, Param &p) {
     int parametreActif = 0;
     std::vector<std::string> noms = {"Probabilité reproduction lapin", "Probabilité reproduction renard", "Proabilité Lapins", "Probabilité Renard", "Nb Tours"};
@@ -254,7 +256,6 @@ void creerParam(sf::RenderWindow& window, Param &p) {
         if (event.type == sf::Event::KeyPressed) {
             if (event.key.code == sf::Keyboard::Down) {
                 parametreActif = (parametreActif + 1) % noms.size();
->>>>>>> Stashed changes
             }
             if (event.key.code == sf::Keyboard::Up) {
                 parametreActif = (parametreActif - 1 + noms.size()) % noms.size();
@@ -295,102 +296,6 @@ void creerParam(sf::RenderWindow& window, Param &p) {
 }
 
 
-<<<<<<< Updated upstream
-void Jeu::simulation(int Tours) {
-    cout << "\n=== ÉTAT INITIAL ===" << endl;
-    cout << "Nombre total d'animaux: " << population.getIds().cardinal() << endl;
-    
-    // Affichage initial des animaux
-    Ensemble Ids = population.getIds();
-    while(!Ids.estVide()) {
-        int temp = Ids.tire();
-        Animal actuel = population.get(temp);
-        if (actuel.getEspece() == Espece::Lapin) {
-            cout << "Lapin " << temp << " - Position: " << actuel.getCoord() << endl;
-        } else {
-            cout << "Renard " << temp << " - Position: " << actuel.getCoord() << " - Nourriture: " << actuel.getFood() << endl;
-        }
-    }
-    
-    cout << "\nGrille initiale:" << endl;
-    affichage();
-    
-    // Génération de l'image initiale
-    string nomFichier = "img000.ppm";
-    genereImagePPM(nomFichier);
-    
-    for (int i = 1; i <= Tours; i++) {
-        cout << "\n=== TOUR " << i << " ===" << endl;
-        
-        // Affichage de l'état initial du tour
-        cout << "\nÉtat initial de la population:" << endl;
-        cout << "Nombre total d'animaux: " << population.getIds().cardinal() << endl;
-        
-        // Séparation des espèces
-        Ids = population.getIds();
-        Ensemble lapin;
-        Ensemble renard;
-        
-        while(!Ids.estVide()) {
-            int temp = Ids.tire();
-            Animal actuel = population.get(temp);
-            if (actuel.getEspece() == Espece::Lapin) {
-                lapin.ajoute(temp);
-                cout << "Lapin " << temp << " - Position: " << actuel.getCoord() << endl;
-            } else {
-                renard.ajoute(temp);
-                cout << "Renard " << temp << " - Position: " << actuel.getCoord() << " - Nourriture: " << actuel.getFood() << endl;
-            }
-        }
-        
-        cout << "Nombre de lapins: " << lapin.cardinal() << endl;
-        cout << "Nombre de renards: " << renard.cardinal() << endl;
-
-        // Déplacement des lapins
-        cout << "\nDéplacement des lapins:" << endl;
-        while(!lapin.estVide()) {
-            int temp = lapin.tire();
-            try {
-                DeplaceAnimal(temp);
-            } catch (const runtime_error& e) {
-                cout << "ERREUR - Lapin " << temp << ": " << e.what() << endl;
-            }
-        }
-
-        // Déplacement des renards
-        cout << "\nDéplacement des renards:" << endl;
-        while(!renard.estVide()) {
-            int temp = renard.tire();
-            try {
-                DeplaceAnimal(temp);
-            } catch (const runtime_error& e) {
-                cout << "ERREUR - Renard " << temp << ": " << e.what() << endl;
-            }
-        }
-
-        // Vérification de la cohérence
-        try {
-            Coherence();
-        } catch (const runtime_error& e) {
-            cout << "ERREUR DE COHÉRENCE: " << e.what() << endl;
-        }
-
-        // Affichage de la grille après le tour
-        cout << "\nÉtat final de la grille après le tour " << i << ":" << endl;
-        affichage();
-        
-        // Génération de l'image pour ce tour
-        char nomFichier[20];
-        sprintf(nomFichier, "img%03d.ppm", i);
-        genereImagePPM(nomFichier);
-    }
-}
-
-void Jeu::genereImagePPM(const string& nomFichier) const {
-    ofstream fichier(nomFichier);
-    if (!fichier) {
-        throw runtime_error("Impossible d'ouvrir le fichier " + nomFichier);
-=======
 // implémenté par Julien Cassou
 void Jeu::simulation(int nbTours, sf::RenderWindow& window, const Param &p) {
     sf::Clock clock;
@@ -498,7 +403,6 @@ void Jeu::afficherEtat(sf::RenderWindow& window, int nbtours) const {
             lapin.ajoute(temp);
         else
             renard.ajoute(temp);
->>>>>>> Stashed changes
     }
 
     sf::Font font;
@@ -551,38 +455,4 @@ void Jeu::afficherEtat(sf::RenderWindow& window, int nbtours) const {
             window.draw(cellule);
         }
     }
-<<<<<<< Updated upstream
 }
-
-// MASSI
-
-// void Jeu::afficherGrille() const {
-//     for (int i = 0; i < TAILLEGRILLE; i++) {
-//         for (int j = 0; j < TAILLEGRILLE; j++) {
-//             Coord c(i, j);
-//             int id = grille.getCase(c); // Récupère l'id de l'animal dans cette case
-
-//             if (id == -1) {
-//                 cout << "⬜️ ";
-//             } else {
-//                 // Sinon, on récupère l'animal avec l'ID
-//                 Animal animal = population.get(id);
-//                 if (animal.getEspece() == Espece::Lapin) {
-//                     cout << "🟦 ";
-//                 } else if (animal.getEspece() == Espece::Renard) {
-//                     cout << "🟥 ";
-//                 }
-//             }
-//         }
-//         cout << endl; 
-//     }
-// }
-
-// Population Jeu::getPopulation() const {
-//         return population;
-// }
-// }
->>>>>>> Stashed changes
-=======
-}
->>>>>>> Stashed changes
