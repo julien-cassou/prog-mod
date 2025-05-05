@@ -1,3 +1,5 @@
+#ifndef JEU_HPP
+#define JEU_HPP
 #include <iostream>
 #include <stdexcept>
 #include <vector>
@@ -47,3 +49,4 @@ class Jeu {
 };
 
 void creerParam(sf::RenderWindow& window, Param &p);
+#endif

@@ -1,8 +1,10 @@
+#ifndef ANIMAL_HPP
+#define ANIMAL_HPP
 #include <stdexcept>
 #include <ostream>
 #include <vector>
 #include <array>
-#include "coord.hpp"
+#include "param.hpp"
 using namespace std;
 
 enum class Espece {Lapin, Renard};
@@ -25,6 +27,7 @@ struct Param {
     Param() : ProBirthLapin(0.20), ProBirthRenard(0.10), ProbSpawnLapins(0.20), ProbSpawnRenards(0.07), NbTours(50) {};
 };
 
+extern Param param;
 
 class Animal {
     public:
@@ -75,3 +78,4 @@ class Population {
         array<bool,MAXCARD> id_reserve;
         vector<int> id_dispo;
 };
+#endif
