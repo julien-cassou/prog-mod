@@ -19,16 +19,6 @@ const int FoodReprod = 8;
 const int MaxFood = 10;
 const int AgeInit = 0;
 
-struct Param {
-    float ProBirthLapin, ProBirthRenard, ProbSpawnLapins, ProbSpawnRenards;
-    int NbTours;
-
-    // Constructeur par défault pour garder les valeurs initiales
-    Param() : ProBirthLapin(0.20), ProBirthRenard(0.10), ProbSpawnLapins(0.20), ProbSpawnRenards(0.07), NbTours(50) {};
-};
-
-extern Param param;
-
 class Animal {
     public:
         // Constructeurs

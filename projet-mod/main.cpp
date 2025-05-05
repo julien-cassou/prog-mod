@@ -15,7 +15,7 @@ using namespace std;
 int main() {
     Param param;
     sf::RenderWindow fenetre(sf::VideoMode(300,400), "Paramètres");
-    // creerParam(fenetre, p);
+    creerParam(fenetre, param);
     // cout << "Lancement du jeu" << endl;
     // Jeu jouer(0.20, 0.07);
     // sf::RenderWindow window(sf::VideoMode(Lwindow, Hwindow), "Simulation");

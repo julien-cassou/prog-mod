@@ -10,4 +10,5 @@ struct Param {
     // Constructeur par défault pour garder les valeurs initiales
     Param() : ProBirthLapin(0.20), ProBirthRenard(0.10), ProbSpawnLapins(0.20), ProbSpawnRenards(0.07), NbTours(50) {};
 };
+extern Param param;
 #endif
