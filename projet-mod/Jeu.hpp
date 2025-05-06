@@ -7,6 +7,7 @@
 #include <string>
 #include <SFML/Graphics.hpp>
 #include "Animal.hpp"
+#include "statistiques.hpp"
 using namespace std;
 
 const int Lwindow = 800;
@@ -38,7 +39,7 @@ class Jeu {
         Ensemble voisinsEspece(Coord c, Espece espece) const;
         void DeplaceAnimal(int id);
         void Coherence() const;
-        void simulation(int nbTours, sf::RenderWindow& window, const Param &p);
+        void simulation(int nbTours, sf::RenderWindow& window, const Param &p, Statistiques &stat);
         void effectuerUnTour(const Param &p);
         void afficherEtat(sf::RenderWindow& window, int nbtours) const;
         // accesseur --> test

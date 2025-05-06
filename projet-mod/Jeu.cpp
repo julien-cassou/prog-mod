@@ -313,9 +313,9 @@ Population Jeu::getPopulation() const {
 /** fonction qui permet le lancement de la simulation en fonction des constantes données 
 **/
 // implémenté par Julien Cassou
-void Jeu::simulation(int nbTours, sf::RenderWindow& window, const Param &p) {
+void Jeu::simulation(int nbTours, sf::RenderWindow& window, const Param &p, Statistiques &stat) {
     sf::Clock clock;
-    int nbtours = 1;
+    int nbtours = 0;
     bool enPause = false;
     vector<float> timespeed = {0.25f ,0.75f ,1.5f ,2.0f, 2.5f, 3.0f, 5.0f};
     int indice = 3;
@@ -340,6 +340,11 @@ void Jeu::simulation(int nbTours, sf::RenderWindow& window, const Param &p) {
         }
         if (!enPause and clock.getElapsedTime().asSeconds() >= timespeed[indice]) {
             effectuerUnTour(p);
+            // lucia -- début
+            int nbLapins = getPopulation().nbLapins();
+            int nbRenards = getPopulation().nbRenards();
+            stat.enregistrer(nbtours, nbLapins, nbRenards);
+            // fin
             nbtours++;
             clock.restart();
         }

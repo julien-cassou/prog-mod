@@ -4,7 +4,7 @@ SFML_FLAGS = -lsfml-graphics -lsfml-window -lsfml-system
 
 OBJS_TEST1 = test.o coord.o
 OBJS_TEST2 = test2.o coord.o Animal.o Jeu.o
-OBJS_MAIN = main.o coord.o Animal.o Jeu.o
+OBJS_MAIN = main.o coord.o Animal.o Jeu.o statistiques.o
 
 EXEC_TEST1 = test
 EXEC_TEST2 = test2
