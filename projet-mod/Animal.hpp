@@ -1,22 +1,21 @@
+#ifndef ANIMAL_HPP
+#define ANIMAL_HPP
 #include <stdexcept>
 #include <ostream>
 #include <vector>
 #include <array>
-#include "coord.hpp"
+#include "param.hpp"
 using namespace std;
 
 enum class Espece {Lapin, Renard};
 
-const float ProBirthLapin = 0.20;
 const int MinFreeBirthLapin = 5;
-const float ProBirthRenard = 0.10; 
 
 const int FoodInit = 5;
 const int FoodLapin = 5;
 const int FoodReprod = 8;
 const int MaxFood = 10;
 const int AgeInit = 0;
-const int ProbMort = 0.38;
 
 class Animal {
     public:
@@ -31,7 +30,7 @@ class Animal {
         int getAge() const;
         // predicats
         bool estMort() const;
-        bool seReproduit(int nbvoisin) const;
+        bool seReproduit(int nbvoisin, const Param &p) const;
         // modification
         void mange();
         void jeune();
@@ -62,8 +61,8 @@ class Population {
         // débogage & tests
         bool estPresent(int id) const;  
         const vector<Animal>& getAnimaux() const { return animaux; }
-    
-    //lucia(rajouté pour csv)
+
+        // rajoute de Lucia pour la création du csv
     int nbLapins() const {
         int count = 0;
         for (const auto& a : animaux) {
@@ -79,9 +78,9 @@ class Population {
         }
         return count;
     }
-    
     private:
         vector<Animal> animaux;
         array<bool,MAXCARD> id_reserve;
         vector<int> id_dispo;
 };
+#endif

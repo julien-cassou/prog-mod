@@ -6,8 +6,9 @@
 #include <vector>
 using namespace std;
 
-//constructeur
-//crée une coordonnée valide,lance une exception si hors de la grille
+    // Coord
+
+// implémenté par Lucia Casalta
 Coord::Coord(int l, int c) {
     if (l < 0 || l >= TAILLEGRILLE || c < 0 || c >= TAILLEGRILLE) {
         throw out_of_range("en dehors de la grille");
@@ -16,18 +17,18 @@ Coord::Coord(int l, int c) {
     colonne = c;
 }
 
-//accesseur ligne,question 5(getters)
+// implémenté par Lucia Casalta
 int Coord::getLigne() const {
     return ligne;
 }
 
-//accesseur colonne
+// implémenté par Lucia Casalta
 int Coord::getColonne() const {
     return colonne;
 }
 
 
-//question 7 ,operateur d'affichage
+// implémenté par Lucia Casalta
 ostream &operator<<(ostream& os, const Coord& c) {
     os << "(" << c.getLigne() << "," << c.getColonne() << ")";
     return os;

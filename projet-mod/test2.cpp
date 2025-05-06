@@ -157,7 +157,7 @@ TEST_CASE("mort renard affamé") {
     Animal r(0, Espece::Renard, Coord(1, 1), FoodInit, AgeInit);
     for (int i = 0; i < 12; ++i) r.jeune();
     CHECK(r.estMort());
-    // dans le jeu
+
     Jeu jeu(0.0, 0.0);
     Coord c(3,3);
     jeu.ajouteAnimal(Espece::Renard, c);

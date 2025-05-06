@@ -28,8 +28,8 @@ fait :
 à faire:
 	- 3 (prio 4)
 	- 4 (prio 2)
-	- 5 (prio 3 facile) entrain d'être fait
-	- 6 (prio)  fait
+	- 5 (prio 3 facile)
+	- 6 (prio)
 
 
 
@@ -38,4 +38,4 @@ problème rencontré:
 	car certain animaux n'existaient plus
 	-je me suis rendu compte tard que les renards pouvaient mourrir à n'importe quel age, problème fonction meurt
 	-du mal à coder déplaceAnimal, bcp de bug
-	-avast qui testait les .exe (version SFML)
+	-

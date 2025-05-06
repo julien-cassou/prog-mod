@@ -1,10 +1,3 @@
-//
-//  coord.hpp
-//  coordonées
-//
-//  Created by Lucia Casalta on 02/04/2025.
-//
-
 #ifndef COORD_HPP
 #define COORD_HPP
 #include <stdexcept>
@@ -12,11 +5,6 @@
 #include <vector>
 #include <array>
 using namespace std;
-
-
-    // Julien
-
-// Ex 3
 
 const int MAXCARD = 1600;
 
@@ -41,10 +29,7 @@ class Ensemble {
 
 const int TAILLEGRILLE = 40;
 
-// TD / Cours
-    // Julien
 
-//declaration de la class pour position dans une grille
 class Coord {
     private:
     int ligne;
