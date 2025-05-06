@@ -69,7 +69,7 @@ void Animal::vieilli() {
 bool Animal::estMort() const {
     double prob = static_cast<double>(rand()) / RAND_MAX;
     if (espece == Espece::Renard) {
-        return (food <= 0) or (age >= 5 && prob < 0.4) or (age >= 15);
+        return (food <= 0) or (age >= 5 && prob < 0.20) or (age >= 15);
     }
     return (age >=  8);
 }  
@@ -87,10 +87,10 @@ void Animal::jeune() {
 // implémenté par Julien Cassou
 bool Animal::seReproduit(int nbVoisin, const Param &p) const {
     if ((espece == Espece::Renard) and (food >= FoodReprod)) {
-        return (static_cast<double>(rand()) / RAND_MAX) < p.ProBirthRenard; // Vérifie si la reproduction réussit
+        return (static_cast<double>(rand()) / RAND_MAX) < p.ProBirthRenard;
     }
     else if (espece == Espece::Lapin and nbVoisin >= MinFreeBirthLapin) {
-        return (static_cast<double>(rand()) / RAND_MAX) < p.ProBirthLapin; // Vérifie si la reproduction réussit
+        return (static_cast<double>(rand()) / RAND_MAX) < p.ProBirthLapin;
     }
     else {
         return false;

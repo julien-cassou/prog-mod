@@ -9,9 +9,7 @@ using namespace std;
 
 enum class Espece {Lapin, Renard};
 
-// const float ProBirthLapin = 0.20;
 const int MinFreeBirthLapin = 5;
-// const float ProBirthRenard = 0.10;
 
 const int FoodInit = 5;
 const int FoodLapin = 5;

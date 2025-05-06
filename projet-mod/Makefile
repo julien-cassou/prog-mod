@@ -19,7 +19,7 @@ $(EXEC_TEST1): $(OBJS_TEST1)
 	$(CXX) -o $@ $^
 
 $(EXEC_TEST2): $(OBJS_TEST2)
-	$(CXX) -o $@ $^
+	$(CXX) -o $@ $^ $(SFML_FLAGS)
 
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@

@@ -52,8 +52,6 @@ void Jeu::ajouteAnimal(Espece espece, Coord c) {
     Animal temp(0, espece, c, FoodInit, AgeInit);
     population.set(temp);
     int id = temp.getId();
-    // cout << "Création " << (espece == Espece::Lapin ? "lapin" : "renard") 
-    //      << " à la position " << c << " avec ID: " << id << endl;
     grille.setCase(c, id);
 }
 
@@ -148,7 +146,6 @@ void Jeu::Coherence() const {
 // implémenté par Julien Cassou
 void Jeu::DeplaceAnimal(int id) {
     try {
-        // Vérifier que l'animal existe dans la population
         if (!population.estPresent(id)) {
             throw runtime_error("L'animal " + to_string(id) + " n'existe pas dans la population");
         }
@@ -160,15 +157,12 @@ void Jeu::DeplaceAnimal(int id) {
         population.supprime(id);
         population.set(animal);
         animal = population.get(id);
-        // cout << animal.getAge()<< " " << animal.getFood() << endl;
         if(animal.estMort()) {
-            // std::cout << "L'animal " + to_string(id) + " de type " + (animal.getEspece() == Espece::Lapin ? "Lapin" : "Renard") + " est mort de vieillesse à " + to_string(animal.getAge()) + " ans" << std::endl;
             grille.VideCase(c);
             population.supprime(id);
             return;
         }
         
-        // Si c'est un renard et qu'il y a un lapin à la destination
         if (animal.getEspece() == Espece::Renard) {
             animal.jeune();
             Ensemble voisinsDisponibles = voisinsEspece(c, Espece::Lapin);
@@ -176,7 +170,6 @@ void Jeu::DeplaceAnimal(int id) {
                 if (animal.estMort()) {
                     grille.VideCase(c);
                     population.supprime(id);
-                    // std::cout << "il est mort de faim" << endl;
                     return;
                 }
                 population.supprime(id);
@@ -188,20 +181,18 @@ void Jeu::DeplaceAnimal(int id) {
                 if (animal.estMort()) {
                     grille.VideCase(c);
                     population.supprime(id);
-                    // std::cout << "il est mort de faim" << endl;
                     return;
                 }
                 try {
                     Animal proie = population.get(idProie);
                     if (proie.getEspece() == Espece::Lapin) {
-                        // Le renard mange le lapin
                         grille.VideCase(c);
                         grille.VideCase(newCoord);
                         grille.setCase(newCoord, id);
                         animal.setCoord(newCoord);
                         animal.mange();
                         population.supprime(idProie);
-                        // Mise à jour de l'animal dans la population
+
                         population.supprime(id);
                         population.set(animal);
                         return;
@@ -215,87 +206,112 @@ void Jeu::DeplaceAnimal(int id) {
         Ensemble voisinsDisponibles = voisinsVides(c);
         if (voisinsDisponibles.estVide()) return;
         Coord newCoord(voisinsDisponibles.tire());
-        // cout << animal.getAge();
-        // Si la case de destination est vide
         if (grille.CaseVide(newCoord)) {
             grille.VideCase(c);
             grille.setCase(newCoord, id);
             animal.setCoord(newCoord);
-            // Mise à jour de l'animal dans la population
+
             population.supprime(id);
             population.set(animal);
             return;
         }
     
-        // Si on arrive ici, le déplacement n'est pas possible
         throw runtime_error("Déplacement impossible : case occupée");
     } catch (const runtime_error& e) {
-        std::cout << "ERREUR - Animal " << id << ": " << e.what() << endl;
+        cout << "ERREUR - Animal " << id << ": " << e.what() << endl;
     }
 }
-
+/** fonction qui permet de définir les constantes utilisées lors de la simulation
+ **/
+// implémenté par Julien Cassou
 void creerParam(sf::RenderWindow& window, Param &p) {
     int parametreActif = 0;
-    std::vector<std::string> noms = {"Probabilité reproduction lapin", "Probabilité reproduction renard", "Proabilité Lapins", "Probabilité Renard", "Nb Tours"};
-    std::vector<float*> valeurs = {
+    vector<string> noms = {
+        "Probabilite reproduction lapin",
+        "Probabilite reproduction renard",
+        "Probabilite Lapins",
+        "Probabilite Renard",
+        "Nb Tours"
+    };
+    vector<float*> valeurs = {
         &p.ProBirthLapin, 
         &p.ProBirthRenard, 
         &p.ProbSpawnLapins, 
         &p.ProbSpawnRenards, 
-        reinterpret_cast<float*>(&p.NbTours),
     };
 
-    sf::Event event;
-    while (window.pollEvent(event)) {
-        if (event.type == sf::Event::Closed) {
-            window.close();
-        }
-        if (event.key.code == sf::Keyboard::Enter) {
-            window.close();
-        }
-        if (event.type == sf::Event::KeyPressed) {
-            if (event.key.code == sf::Keyboard::Down) {
-                parametreActif = (parametreActif + 1) % noms.size();
-            }
-            if (event.key.code == sf::Keyboard::Up) {
-                parametreActif = (parametreActif - 1 + noms.size()) % noms.size();
-            }
-            if (event.key.code == sf::Keyboard::Right) {
-                if (parametreActif == 4) {
-                    *valeurs[parametreActif] = min(200, (int)(*valeurs[parametreActif] + 5));
-                }
-                *valeurs[parametreActif] += 0.1f;
-            }
-            if (event.key.code == sf::Keyboard::Left) {
-                if (parametreActif == 4) {
-                    *valeurs[parametreActif] = max(1, (int)(*valeurs[parametreActif] - 1));
-                }
-                *valeurs[parametreActif] = max(0.01f, *valeurs[parametreActif] - 0.01f);
-            }
-        }
-    }
-
-    window.clear();
     sf::Font font;
     if (!font.loadFromFile("arial.ttf")) {
-        throw std::runtime_error("La police ne se charge pas");
-    }
-    
-    sf::Text text;
-    text.setFont(font);
-    text.setCharacterSize(20);
-    text.setFillColor(sf::Color::White);
-    
-    for (size_t i = 0; i < noms.size(); ++i) {
-        text.setString(noms[i] + ": " + std::to_string(*valeurs[i]));
-        text.setPosition(10, 30 + i * 30);
-        window.draw(text);
+        throw runtime_error("La police ne se charge pas");
     }
 
-    window.display();
+    while (window.isOpen()) {
+        sf::Event event;
+        while (window.pollEvent(event)) {
+            if (event.type == sf::Event::Closed) {
+                window.close();
+            }
+            if (event.type == sf::Event::KeyPressed) {
+                if (event.key.code == sf::Keyboard::Enter) {
+                    window.close();
+                }
+                if (event.key.code == sf::Keyboard::Down) {
+                    parametreActif = (parametreActif + 1) % noms.size();
+                }
+                if (event.key.code == sf::Keyboard::Up) {
+                    parametreActif = (parametreActif - 1 + noms.size()) % noms.size();
+                }
+                if (event.key.code == sf::Keyboard::Right) {
+                    if (parametreActif == 4) {
+                        p.NbTours = min(200, p.NbTours + 5);
+                    } else {
+                        *valeurs[parametreActif] = min(1.00f, *valeurs[parametreActif] + 0.1f);
+                    }
+                }
+                if (event.key.code == sf::Keyboard::Left) {
+                    if (parametreActif == 4) {
+                        p.NbTours = max(1, p.NbTours - 1);
+                    } else {
+                        *valeurs[parametreActif] = max(0.01f, *valeurs[parametreActif] - 0.01f);
+                    }
+                }
+            }
+        }
+
+        window.clear(sf::Color::Black);
+        for (size_t i = 0; i < noms.size(); i++) {
+            sf::Text text;
+            text.setFont(font);
+            text.setCharacterSize(20);
+            if (i == parametreActif) {
+                text.setFillColor(sf::Color::Green);
+            }
+            else { 
+                text.setFillColor(sf::Color::White);
+            }
+            if (i == 4) {
+                text.setString(noms[i] + ": " + to_string(p.NbTours));
+            }
+            else {
+                text.setString(noms[i] + ": " + to_string(*valeurs[i]));
+            }
+            text.setPosition(10, 30 + i * 30);
+            window.draw(text);
+        }
+        window.display();
+    }
 }
 
+/**méthode qui permet d'obtenir la population d'un jeu
+ *@return la population du jeu
+ implémenté par Julien Cassou
+ **/
+Population Jeu::getPopulation() const {
+    return population;
+}
 
+/** fonction qui permet le lancement de la simulation en fonction des constantes données 
+**/
 // implémenté par Julien Cassou
 void Jeu::simulation(int nbTours, sf::RenderWindow& window, const Param &p) {
     sf::Clock clock;
@@ -361,6 +377,9 @@ void Jeu::simulation(int nbTours, sf::RenderWindow& window, const Param &p) {
     }
 }
 
+/** fonction qui effectue un tour de la simulation, déplaçant chacun des animaux un par un de manière aléatoire 
+ * **/
+// implémenté par Julien Cassou
 void Jeu::effectuerUnTour(const Param &p) {
     Ensemble Ids = population.getIds();
     while (!Ids.estVide()) {
@@ -379,19 +398,22 @@ void Jeu::effectuerUnTour(const Param &p) {
                 population.set(nouveau);
                 grille.setCase(c, nouveau.getId());
             }
-        } catch (const std::runtime_error& e) {
-            std::cerr << "ERREUR - " << temp << ": " << e.what() << std::endl;
+        } catch (const runtime_error& e) {
+            cerr << "ERREUR - " << temp << ": " << e.what() << endl;
         }
 
         try {
             Coherence();
-        } catch (const std::runtime_error& e) {
-            std::cerr << "ERREUR DE COHÉRENCE: " << e.what() << std::endl;
+        } catch (const runtime_error& e) {
+            cerr << "ERREUR DE COHÉRENCE: " << e.what() << endl;
         }
     }
 }
 
-
+/** fonction qui affiche l'etat d'un tour dans une fenêtre SFML
+ * 
+ **/
+// implémenté par Julien Cassou
 void Jeu::afficherEtat(sf::RenderWindow& window, int nbtours) const {
     Ensemble Ids = population.getIds();
     Ensemble lapin, renard;
@@ -415,13 +437,13 @@ void Jeu::afficherEtat(sf::RenderWindow& window, int nbtours) const {
     tour.setCharacterSize(24);
     tour.setFillColor(sf::Color::White);
     tour.setPosition(10, 10);
-    tour.setString("Tours : " + std::to_string(nbtours));
+    tour.setString("Tours : " + to_string(nbtours));
 
     sf::Text texte;
     texte.setFont(font);
     texte.setCharacterSize(20);
     texte.setFillColor(sf::Color::White);
-    std::ostringstream oss;
+    ostringstream oss;
     oss << "Total animaux: " << tot << "\n"
         << "Lapins: " << lapin.cardinal() << "\n"
         << "Renards: " << renard.cardinal();
@@ -434,7 +456,7 @@ void Jeu::afficherEtat(sf::RenderWindow& window, int nbtours) const {
     for (int i = 0; i < TAILLEGRILLE; ++i) {
         for (int j = 0; j < TAILLEGRILLE; ++j) {
             sf::RectangleShape cellule(sf::Vector2f(taille, taille));
-            float posY = Hwindow - (i + 1) * taille; // permet de faire partir la grille d'en bas à droite
+            float posY = Hwindow - (i + 1) * taille; // permet de faire partir la grille d'en bas à gauche et non pas d'en du coin haut droit / aide Chat GPT
             cellule.setPosition(j * taille, posY);
             cellule.setOutlineThickness(1);
             cellule.setOutlineColor(sf::Color::Black);

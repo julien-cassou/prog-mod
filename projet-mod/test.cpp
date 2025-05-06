@@ -137,7 +137,6 @@ TEST_CASE("Ensemble de coords voisines") {
 	Coord w {3,4};
 	Ensemble e;
 	e = w.voisines();
-	int ind = e.cardinal();
 	while(!e.estVide()) {
 		int b = e.tire();
 		Coord c{b};
@@ -148,7 +147,6 @@ TEST_CASE("Ensemble de coords voisines") {
 	Coord n {3,39};
 	Ensemble l;
 	l = n.voisines();
-	int ind1 = l.cardinal();
 	while(!l.estVide()){
 		int b = l.tire();
 		Coord c{b};
