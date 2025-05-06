@@ -62,6 +62,24 @@ class Population {
         // débogage & tests
         bool estPresent(int id) const;  
         const vector<Animal>& getAnimaux() const { return animaux; }
+    
+    //lucia(rajouté pour csv)
+    int nbLapins() const {
+        int count = 0;
+        for (const auto& a : animaux) {
+            if (a.getEspece() == Espece::Lapin) ++count;
+        }
+        return count;
+    }
+
+    int nbRenards() const {
+        int count = 0;
+        for (const auto& a : animaux) {
+            if (a.getEspece() == Espece::Renard) ++count;
+        }
+        return count;
+    }
+    
     private:
         vector<Animal> animaux;
         array<bool,MAXCARD> id_reserve;
