@@ -26,4 +26,4 @@ $(EXEC_TEST2): $(OBJS_TEST2)
 
 
 clean:
-	rm -f *.o *.ppm *.exe $(EXEC_TEST) $(EXEC_MAIN)
+	rm -f *.o *.ppm *.exe *csv $(EXEC_TEST) $(EXEC_MAIN)
